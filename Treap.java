@@ -1,14 +1,16 @@
+//Got inspriation from http://users.cis.fiu.edu/~weiss/dsaajava/code/DataStructures/Treap.java
+
 import java.util.Random;
 public class Treap implements OrderedSet {
 	TreapNode root;
 	static Random random = new Random();
 	private static class TreapNode {
-		int value;
+		Comparable value;
 		int priority;
 		TreapNode leftChild;
 		TreapNode rightChild;
 		TreapNode parent;
-		public TreapNode(int value, int priority){
+		public TreapNode(Comparable value, int priority){
 			this.value = value;
 			this.priority = priority;
 		}
@@ -28,48 +30,39 @@ public class Treap implements OrderedSet {
 		
 	}
 	
-	public void insert(int data) {
+	public void insert(Comparable data){
 		if (root == null)
 			root = new TreapNode(data, random.nextInt());
 		else{
-			TreapNode treapNodeToInsert = new TreapNode(data, random.nextInt());
-			TreapNode ptr = root;
-			while (true){
-				if (data < ptr.value){
-					if (ptr.leftChild == null){
-						ptr.leftChild = treapNodeToInsert;
-						break;
-					}
-					else
-						ptr = ptr.leftChild;
-				}
-				else if (data > ptr.value) {
-					if (ptr.rightChild == null){
-						ptr.rightChild = treapNodeToInsert;
-						break;
-					}
-					else
-						ptr = ptr.rightChild;
-				}
-			}
+			insert(data, root);
 		}
-		
+	}
+	
+	private void insert(Comparable data, TreapNode node){
+		if (data.compareTo(node.value) < 0)
+			insert(data, node.leftChild);
 	}
 
 	@Override
-	public boolean contains(int data) {
+	public boolean contains(Comparable data) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void delete(int data) {
+	public void delete(Comparable data) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void successor(int data) {
+	public void successor(Comparable data) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void getMin() {
 		// TODO Auto-generated method stub
 		
 	}
