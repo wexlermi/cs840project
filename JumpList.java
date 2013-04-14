@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.Arrays;
 
 public class JumpList  implements OrderedSet {
 	public JumpListNode headNode;
@@ -23,8 +24,18 @@ public class JumpList  implements OrderedSet {
 	{
 		////Inititalize a jump list here
 		JumpList jl = new JumpList();
-		for (int i = 20; i >= 1; i--)
+		/*for (int i = 20; i >= 1; i--)
 			jl.init_insert(i);
+		*/
+		int oList[] = new int[10];
+		for (int i = oList.length-1; i >= 0; i--)
+		{
+			final int randomNum = (int) (Math.random() * 100);
+			oList[i] = randomNum;
+		}
+		Arrays.sort(oList);
+		for (int i = oList.length-1; i >= 0; i--)
+			jl.init_insert(oList[i]);
 		
 		//build up the jump links here
 		jl.build_perfect_jumplist(jl.headNode, jl.length);
@@ -36,6 +47,17 @@ public class JumpList  implements OrderedSet {
 			int target_item = tItems[i];
 			System.out.println("The jl contains " + target_item + ": " + jl.contains(target_item));
 		}
+
+		// test insert method here
+		/*int tItems[] = new int[]{21};//, 7, 13, 21}; 
+		for (int i = 0; i < tItems.length; i++){
+			int target_item = tItems[i];
+			jl.insert(target_item);
+			System.out.println("Inserting: " + target_item + "\n");
+		}
+		jl.print_list();
+		*/
+
 	}
 
 	private void init_insert(Comparable data)
@@ -53,21 +75,7 @@ public class JumpList  implements OrderedSet {
 				" -------- Next to Node: " + (currNode.nextNode != null ? currNode.nextNode.value : "no next Node.") +
 				" -------- Jump to Node: " + (currNode.jumpToNode != null ? currNode.jumpToNode.value : "no jump Node.") + "\n");
 			currNode = currNode.nextNode;
-			//System.out.println(currNode.jumpToNode.value);	
 		}
-		
-		/*
-		while (currNode != null && currNode.value.compareTo(11) < 0) {			
-			System.out.println(currNode.value + ":");
-			JumpListNode nextNode = currNode.jumpToNode;
-			while (nextNode != null){				
-				System.out.print("	" + nextNode.value);
-				nextNode = nextNode.jumpToNode;
-			}
-			System.out.println();
-			currNode = currNode.nextNode;
-		}*/
-		//System.out.println();
 	}
 
 	/*public void build_jumplist(int headIndex, int tailIndex){
@@ -98,42 +106,63 @@ public class JumpList  implements OrderedSet {
 	}
 
 	public void insert(Comparable data){
-		/*if (this.length == 0)
+		if (this.contains(data))
 		{
-			this.length = 1;
-			this.headNode = new JumpListNode(data);
+			System.out.println("Target Item: " + data + " is in the jumplist already.");
+			return;
 		}
-		else if (this.length == 1){
-			if (this.headNode.value.compareTo(data) < 0) {
-				this.headNode.nextNode = new JumpListNode(data);
-			}
-			else if (this.headNode.value.compareTo(data) > 0){
-				JumpListNode newNode = new JumpListNode(data);
-				JumpListNode oldNode = this.headNode;
-				this.headNode = newNode;
-				this.headNode.nextNode = oldNode;
-			}
-			else {
-				System.out.println("JumpList has only one element and head value = inserted value.");
-			}
-		}
-		else {
-			JumpListNode prevNode = null;
-			JumpListNode currNode = this.headNode;
-			while (currNode != null && currNode.value.compareTo(data) < 0){
-				prevNode = currNode;
-				currNode = currNode.nextNode;
-			}
-			currNode = new JumpListNode(data);
-			prevNode.nextNode = currNode;
-		}*/
 
-		/*JumpListNode currNode = this.headNode;
-		if (currNode.value < data) {
-			JumpListNode newNode = new JumpListNode(data);
-			
-		}*/
-		
+		JumpListNode x = this.headNode;
+		JumpListNode y = new JumpListNode(data);
+
+		while (x.jumpToNode != x)
+		{
+			double alpha = 0.40;	//0 < alpha < 0.5; alpha could be 1 - 1/sqrt(2)
+			double temp = (double)(x.ncount + 1)/(2 + x.ncount + x.jcount);
+			if ((1 - alpha) < temp && temp < alpha){
+				this.build_perfect_jumplist(x, (1 + x.ncount + x.jcount));
+			}
+			if (x.jumpToNode.value.compareTo(data) <= 0)
+			{
+				x.jcount++;
+				x = x.jumpToNode;
+			}
+			else
+			{
+				x.ncount++;
+				if (x.nextNode.value.compareTo(data) <= 0)
+					x = x.nextNode;
+				else
+					break;
+			}
+		}
+
+		y.nextNode = x.nextNode;
+		x.nextNode = y;
+
+		if (x.jumpToNode == x){
+			x.jumpToNode = y;
+			x.jcount = 1;
+		}
+		else if (x.jumpToNode != y.nextNode){
+			while (y.ncount > 1){
+				y.jumpToNode = y.nextNode.jumpToNode;
+				y.jcount = y.nextNode.jcount;
+				y.ncount = y.nextNode.ncount + 1;
+				y = y.nextNode;
+			}
+			if (y.jumpToNode == y.nextNode){
+				y.jumpToNode = y;
+				y.jcount = 0;
+			}
+			else
+			{
+				y.jumpToNode = y.nextNode;
+				y.jcount = 1;
+				y.ncount = 0;
+			}
+		}
+		this.length++;
 	}
 
 	public boolean contains(Comparable data)
