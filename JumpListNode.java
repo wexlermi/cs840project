@@ -13,5 +13,5 @@ public class JumpListNode {
 		this.isTail = false;
 		this.nextNode = null;
 		this.jumpToNode = null;
-	}
+	}	
 }

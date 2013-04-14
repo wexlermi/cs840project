@@ -21,13 +21,21 @@ public class JumpList  implements OrderedSet {
 
 	public static void main(String args[])
 	{
+		////Inititalize a jump list here
 		JumpList jl = new JumpList();
-		//System.out.println(jl);
-		for (int i = 10; i >= 1; i--)
+		for (int i = 20; i >= 1; i--)
 			jl.init_insert(i);
 		
-		jl.build_perfect_jumplist(jl.headNode,10);
+		//build up the jump links here
+		jl.build_perfect_jumplist(jl.headNode, jl.length);
 		jl.print_list();
+
+		// test search method here
+		int tItems[] = new int[]{2, 7, 13, 21}; 
+		for (int i = 0; i < tItems.length; i++){
+			int target_item = tItems[i];
+			System.out.println("The jl contains " + target_item + ": " + jl.contains(target_item));
+		}
 	}
 
 	private void init_insert(Comparable data)
@@ -35,11 +43,21 @@ public class JumpList  implements OrderedSet {
 		JumpListNode newNode = new JumpListNode(data);
 		newNode.nextNode = this.headNode;
 		headNode = newNode;
+		this.length++;
 	}
 
 	public void print_list(){
 		JumpListNode currNode = this.headNode;
-		while (currNode != null && currNode.value.compareTo(10) <= 0) {			
+		for (int i = 0; i < this.length; i++){
+			System.out.print(i + 1 + ". Current Node: " + currNode.value + 
+				" -------- Next to Node: " + (currNode.nextNode != null ? currNode.nextNode.value : "no next Node.") +
+				" -------- Jump to Node: " + (currNode.jumpToNode != null ? currNode.jumpToNode.value : "no jump Node.") + "\n");
+			currNode = currNode.nextNode;
+			//System.out.println(currNode.jumpToNode.value);	
+		}
+		
+		/*
+		while (currNode != null && currNode.value.compareTo(11) < 0) {			
 			System.out.println(currNode.value + ":");
 			JumpListNode nextNode = currNode.jumpToNode;
 			while (nextNode != null){				
@@ -48,7 +66,7 @@ public class JumpList  implements OrderedSet {
 			}
 			System.out.println();
 			currNode = currNode.nextNode;
-		}
+		}*/
 		//System.out.println();
 	}
 
@@ -120,7 +138,26 @@ public class JumpList  implements OrderedSet {
 
 	public boolean contains(Comparable data)
 	{
-			return false;
+		JumpListNode x = this.headNode;
+
+		if (x != null && x.value.compareTo(data) == 0)
+			return true;
+
+		while (x.jumpToNode != x)
+		{
+			if (x.jumpToNode.value.compareTo(data) < 0){
+				x = x.jumpToNode;
+			}
+			else if (x.nextNode.value.compareTo(data) < 0){
+				x = x.nextNode;
+			}
+			else {
+				return x.nextNode.value.compareTo(data) == 0;
+			}
+		}
+
+		return (x.nextNode != null ? x.nextNode.value.compareTo(data) == 0 : false);
+		//return false;
 	}
 
 	public void delete(Comparable data)
