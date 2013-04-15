@@ -278,4 +278,10 @@ public class JumpList  implements OrderedSet {
 	public Comparable getMin(){
 		return null;
 	}
+
+	@Override
+	public void insert(long data) {
+		// TODO Auto-generated method stub
+		
+	}
 }

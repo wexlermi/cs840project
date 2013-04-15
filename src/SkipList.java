@@ -17,12 +17,12 @@ public class SkipList implements Set
 	}
 	private class Node
 	{
-		public long key;
+		public Comparable key;
 		public long level;
 		public Node next;
 		public Node down;
 		
-		public Node(long key, long level, Node next, Node down)
+		public Node(Comparable key, long level, Node next, Node down)
 		{
 			this.key = key;
 			this.level = level;
@@ -60,7 +60,7 @@ public class SkipList implements Set
 		_p = 0.5;
 	}
 	
-	public void insert(long key)
+	public void insert(Comparable key)
 	{
 		long level = _level();
 		if (level > _head.level) {
@@ -71,7 +71,7 @@ public class SkipList implements Set
 		Node last = null;
 		
 		while (cur != null) {
-			if (cur.next == null || cur.next.key > key) {
+			if (cur.next == null || cur.next.key.compareTo(key)>0) {
 				if (level >= cur.level) {
 					Node n = new Node(key, cur.level, cur.next, null);
 					if (last != null) {
@@ -95,12 +95,12 @@ public class SkipList implements Set
 	}
 	
 	
-	public void delete(long key)
+	public void delete(Comparable key)
 	{
 		
 		Node cur = _head;
 		while (cur != null) {
-			if (cur.next == null || cur.next.key >= key) {
+			if (cur.next == null || cur.next.key.compareTo(key) >= 0) {
 				if (cur.next != null && cur.next.key == key) {
 					cur.next = cur.next.next;
 				}
@@ -115,11 +115,11 @@ public class SkipList implements Set
 		_size--;
 	}
 	
-	public boolean contains(long key)
+	public boolean contains(Comparable key)
 	{
 		Node cur = _head;
 		while (cur != null) {
-			if (cur.next == null || cur.next.key > (key)) {
+			if (cur.next == null || cur.next.key.compareTo(key) > 0) {
 				cur = cur.down;
 				continue;
 			} else if (cur.next.key == key) {
