@@ -2,37 +2,36 @@
 
 import java.util.Random;
 
-public class SkipList<T extends Comparable<T>, U>
+public class SkipList implements Set
 {
-//	public static void main(String[] args){
-//		SkipList<Integer, String> skipList = new SkipList<Integer, String>();
-//		//skipList.add(2, "abc");
-//		//skipList.add(3, "def");
-//		for (int i = 1; i < 100; i++){
-//			skipList.add(i, i + "");
-//		}
-//		System.out.println(skipList.toString());
-//	}
+	public static void main(String[] args) {
+		SkipList skipList = new SkipList();
+		for (int i = 1; i < 100; i++) {
+			skipList.insert(i);
+		}
+		System.out.println("3: " + skipList.contains(3));
+		System.out.println("322: " + skipList.contains(322));
+		System.out.println("101: " + skipList.contains(101));
+		System.out.println("99: " + skipList.contains(99));
+		System.out.println(skipList);
+	}
 	private class Node
 	{
-		public T key;
-		public U value;
+		public long key;
 		public long level;
 		public Node next;
 		public Node down;
 		
-		public Node(T key, U value, long level, Node next, Node down)
+		public Node(long key, long level, Node next, Node down)
 		{
 			this.key = key;
-			this.value = value;
 			this.level = level;
 			this.next = next;
 			this.down = down;
 		}
 		
 		public String toString(){
-			if (key == null) return "NULL";
-			return key.toString();
+			return key + "";
 		}
 	}
 	
@@ -40,6 +39,8 @@ public class SkipList<T extends Comparable<T>, U>
 	private Random _random;
 	private long _size;
 	private double _p;
+
+	private static final long MIN_VALUE = Long.MIN_VALUE;
 	
 	private long _level()
 	{
@@ -53,26 +54,26 @@ public class SkipList<T extends Comparable<T>, U>
 	
 	public SkipList()
 	{
-		_head = new Node(null, null, 0, null, null);
+		_head = new Node(MIN_VALUE, 0, null, null);
 		_random = new Random();
 		_size = 0;
 		_p = 0.5;
 	}
 	
-	public void add(T key, U value)
+	public void insert(long key)
 	{
 		long level = _level();
 		if (level > _head.level) {
-			_head = new Node(null, null, level, null, _head);
+			_head = new Node(MIN_VALUE, level, null, _head);
 		}
 		
 		Node cur = _head;
 		Node last = null;
 		
 		while (cur != null) {
-			if (cur.next == null || cur.next.key.compareTo(key) > 0) {
+			if (cur.next == null || cur.next.key > key) {
 				if (level >= cur.level) {
-					Node n = new Node(key, value, cur.level, cur.next, null);
+					Node n = new Node(key, cur.level, cur.next, null);
 					if (last != null) {
 						last.down = n;
 					}
@@ -83,8 +84,7 @@ public class SkipList<T extends Comparable<T>, U>
 				
 				cur = cur.down;
 				continue;
-			} else if (cur.next.key.equals(key)) {
-				cur.next.value = value;
+			} else if (cur.next.key == key) {
 				return;
 			}
 			
@@ -94,20 +94,14 @@ public class SkipList<T extends Comparable<T>, U>
 		_size++;
 	}
 	
-	public boolean containsKey(T key)
-	{
-		return get(key) != null;
-	}
 	
-	public U remove(T key)
+	public void delete(long key)
 	{
-		U value = null;
 		
 		Node cur = _head;
 		while (cur != null) {
-			if (cur.next == null || cur.next.key.compareTo(key) >= 0) {
-				if (cur.next != null && cur.next.key.equals(key)) {
-					value = cur.next.value;
+			if (cur.next == null || cur.next.key >= key) {
+				if (cur.next != null && cur.next.key == key) {
 					cur.next = cur.next.next;
 				}
 				
@@ -119,30 +113,27 @@ public class SkipList<T extends Comparable<T>, U>
 		}
 		
 		_size--;
-		return value;
 	}
 	
-	public U get(T key)
+	public boolean contains(long key)
 	{
 		Node cur = _head;
 		while (cur != null) {
-			if (cur.next == null || cur.next.key.compareTo(key) > 0) {
+			if (cur.next == null || cur.next.key > (key)) {
 				cur = cur.down;
 				continue;
-			} else if (cur.next.key.equals(key)) {
-				return cur.next.value;
+			} else if (cur.next.key == key) {
+				return true;
 			}
 			
 			cur = cur.next;
 		}
 		
-		return null;
+		return false;
 	}
 	
 	public String toString()
 	{
-		
-		long level = _head.level;
 		String str = "";
 		Node levelHead = _head;
 		Node cur;

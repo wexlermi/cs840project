@@ -2,17 +2,17 @@
 
 import java.util.Random;
 
-public class SkipLift<T extends Comparable<T>, U> {
+public class SkipLift implements Set {
 	public static void main(String[] args) {
-		SkipLift<Integer, String> skipList = new SkipLift<Integer, String>();
+		SkipLift skipLift = new SkipLift();
 		for (int i = 1; i < 100; i++) {
-			skipList.insert(i);
+			skipLift.insert(i);
 		}
-		System.out.println("3: " + skipList.contains(3));
-		System.out.println("322: " + skipList.contains(322));
-		System.out.println("101: " + skipList.contains(101));
-		System.out.println("99: " + skipList.contains(99));
-		System.out.println(skipList);
+		System.out.println("3: " + skipLift.contains(3));
+		System.out.println("322: " + skipLift.contains(322));
+		System.out.println("101: " + skipLift.contains(101));
+		System.out.println("99: " + skipLift.contains(99));
+		System.out.println(skipLift);
 	}
 
 	private class Node {
@@ -54,7 +54,7 @@ public class SkipLift<T extends Comparable<T>, U> {
 		p = 0.5;
 	}
 
-	public void insert(long value) {
+	public void insert(Long value) {
 		long level = randomLevel();
 		Node newNode = new Node(value, level);
 		if (level >= 1)
@@ -136,5 +136,24 @@ public class SkipLift<T extends Comparable<T>, U> {
 		}
 
 		return str;
+	}
+
+	@Override
+	public void insert(Comparable data) {
+		insert((Long)data);
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean contains(Comparable data) {
+		return contains((Long)data);
+	}
+
+	@Override
+	public void delete(Comparable data) {
+		delete((Long)data);
+		// TODO Auto-generated method stub
+		
 	}
 }
