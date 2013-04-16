@@ -4,7 +4,6 @@
 \usepackage{amsmath} % AMSLaTeX
 \usepackage{url}
 \usepackage[pdftex]{graphicx}
-\usepackage{slashbox}
 
 % Compile only with pdfLaTeX
 \usepackage[pdftex]{graphicx}
@@ -97,83 +96,44 @@ For instance, for a given n, if we were to insert the sequence 1 2 ... n into a 
 
 The afforementioned data structures in their classical implementations all use deterministic methods for organizing their data.  Oftentimes, one wants to put a certain element of randomness into their dictionary data structures in order to avoid situations where their data structure becomes skewed. In this paper we will discuss various data structures that use randomness in order to maintain a level of balance, to avoid skewed distributions.
 
-This paper is organized as follows: section \ref{sctn:randomized_data_structuresl}
-
-This is the case for a good reason, as we will see in section \ref{sctn:Z3} where we discuss computational limitations we have considering nonlinear equations.
-
-Nevertheless, for the nonlinear case, in the project \textsc{CREST-Z3}, the theorem prover was replaced
-by \textsc{Microsoft'}s solution \textsc{Z3}
-(\cite{de2008z3}), which can handle a broader range of equation types,
-including nonlinear ones. \textsc{CREST-Z3}, its architecture and
-its practicality will be the subject of this paper.
-
-The paper is organized as follows: Section \ref{sctn:CRESTZ3} is
-dedicated to \textsc{CREST}(-\textsc{Z3}). We will see how one can use
-this tool, specifications of its architecture, and some limitations
-that we found.
-
-In section \ref{sctn:Z3}, we will examine those limitations a little
-bit closer from a theoretical point of view. The limitations we will address are not just holding for this particular implementation, but are valid for any implementation that would try to do solving nonlinear constraints. A general overview of
-\textsc{Z3} will also be provided.
-
-Section \ref{sctn:Experiments} contains experiments we have done with
-\textsc{CREST-Z3}. Furthermore, we are presenting types of \textsc{C/++}-projects
-where nonlinear equations do play a role in the branching conditions
-of the code. We will discuss how useful the extension \textsc{CREST-Z3} is in practical examples, and what extensions would be useful for the future.
-
-Section \ref{sctn:Improvements} discusses some improvements we made to CREST to allow for higher efficiency
-and better user experience.
+This paper is organized as follows: section \ref{sctn:randomized_data_structures} will give an overview on several probabalistic set data structures. Section \ref{sctn:experiments} will give an overview on some experiments we performed in order to compare these data structures.
 
 The last section draws a conclusion of our work.
 
-All test files and program code we describe in this report can be found in our \textsc{GitHub} repository \url{https://github.com/wexlermi/dartnl}.
+All test files and program code we describe in this report can be found in our \textsc{GitHub} repository \url{https://github.com/wexlermi/cs840project}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\textsc{CREST}(-\textsc{Z3})}
-\label{sctn:CRESTZ3}
+\section{Randomized data structures}
+\label{sctn:randomized_data_structures}
 
-For notational convenience, we will from now on refer to
-\textsc{CREST-Z3} as \textsc{CREST}. Most of the description of the
-use of \textsc{CREST-Z3} can also be applied to the original
-\textsc{CREST} project.
+\subsection{Treaps}
+The first randomized data structure we will talk about is the treap. Treaps are at their foundation binary-search-trees, with a certain amount of randomness that allows them to remain balanced in the average case. Every element in a treap has the binary-search-tree property, such that all the nodes in its right subtree are greater than the root, and all the nodes in its left subtree are less than the root. However, every node in a treap contains a priority value, in which the priority of a treap node is always higher than that of its children. When we insert a new element into the treap, we randomly assign it a priority, which is a random integer from a sufficiently large range to ensure there are no collisions. Then we put the element in the treap, in the place it would go if it were considered only as a binary search tree. Once it is put in its proper place in the treap, a sequence of rotations are performed to restore the priority requirement, while still maintaining proper place to make sure its key is in the proper order.
 
-\subsection{How to use \textsc{CREST}}
-We will start by presenting how one can use \textsc{CREST} to find
-inputs in order to obtain reasonable code coverage.
+\begin{figure}[here]
+\center
+\includegraphics[width=7cm]{treap}
+\caption{Example of a treap from http://en.wikipedia.org/wiki/File:TreapAlphaKey.svg}
+\label{fig:treap}
+\end{figure}
 
-One has to manually instrument code prior of running \textsc{CREST}.
+Figure \ref{fig:treap} is an example of a very small treap. The letters represent keys, and have the in-order property one would expect in a binary search tree. The numbers represent the priorities, in which case we have a max-heap, since each node has a priority greater than its children.
 
-Let us study how this is done using the following example:
+\subsection{Skip lists}
+Skip lists are a randomized data structure that is inherently built upon ordinary linked-lists. Imagine we had a linked list of n numbers, in sorted order. If we had to search for an element x in this linked-list, it would be quite inefficient to linearly search for it. Instead, we can put pointers every other element, or every 3rd element, etc. This way, when searching for an element, we can first search through the top level, and once we find an element greater than it, we can drop down and search our original linked list.
 
-\begin{example}
-\label{ex:codeForDemo}
-\begin{verbatim}
+We can repeat the process for the top linked list: put pointers to every other element. We keep repeating this process, where each higher level has half the pointers of the level below it, until we get a level which has 1 or 2 pointers. Then when we search for an element x, we start at the top list, skipping over elements that are less, then dropping down to lower and lower levels, repeating the process, until we either find the element we are looking for, or reach the bottom level and overshoot it, in which case we determine that the element does not exist in the skip list.
 
-[1]   #include <crest.h>
-[2]   #include <stdio.h>
-[3]  
-[4]   int main(int argc, char *argv[])
-[5]   {
-[6]     int w;
-[7]     int x;
-[8]     int y;
-[9]     int z;
-[10]    CREST_int(x);
-[11]    CREST_int(y);
-[12]    CREST_int(z);
-[13]    CREST_int(w);
-[14]    if (x*y + z == 0){
-[15]      w = x*y*z;
-[16]      if (w == z + x*y-1){
-[17]        printf("GOAL %d %d %d %d\n", x, y, z, w);
-[18]        return 1;
-[19]      }
-[20]    }	
-[21]    return 0;
-[22]  }
-\end{verbatim}
-\end{example}
+While the above description of a linked-list seems good at first, we reach a problem for insertion and deletion, in which case the length of the levels no longer have length $2^i$. Instead, we decide to use probabalistic methods to keep our levels approximately of length $2^i$. We specify a varible $p$ which represents the probability that an element on level $i$ will appear on level $i+1$. The typical value is $p=\frac{1}{2}$. Every time we would like to insert a key $x$ into the skip-list, we first put it at level 0. Then, we "flip a coin" a certain amount of times, and while we are getting heads, we keep adding the element to higher and higher levels, until we get a tails, and then we stop. This will mathematically ensure that our skip-list has approximately half the number of nodes at higher and higher levels, and provides us with good performance for insert and delete operations, something that is quite hard to maintain in deterministic skip-lists.
+
+\begin{figure}[here]
+\center
+\includegraphics[width=7cm]{skip_list}
+\caption{Example of a skip-list from cite2}
+\label{fig:treap}
+\end{figure}
+
+cite2: \url{http://en.wikipedia.org/wiki/Skip_list}
 
 The main steps are:
 \begin{enumerate}
@@ -778,7 +738,6 @@ Table 1 represents the timings when running CREST on our test-set using DFS (dep
 \begin{center}
 \begin{tabular}{|r|r|r|r|r|l|}
 \hline
-\backslashbox{Depth}{Num-vars} & 1 & 2 & 3 & 4 & \multicolumn{1}{r|}{5} \\ \hline
 1 & 0.131 & 0.163 & 0.112 & 2.482 & \multicolumn{1}{r|}{1.19} \\ \hline
 2 & 0.129 & 0.147 & 26.738 & 26.751 & --- \\ \hline
 3 & 0.111 & 0.133 & 6.354 & 27.138 & --- \\ \hline
@@ -803,7 +762,6 @@ Figure 1 gives a graphical view of Table 1. The checkered squares of Figure 1 re
 \begin{center}
 \begin{tabular}{|r|r|r|r|r|r|}
 \hline
-\backslashbox{Depth}{Num-vars} & 1 & 2 & 3 & 4 & 5 \\ \hline
 1 & 1 & 1 & 1 & 1 & 1 \\ \hline
 2 & 0.75 & 0.75 & 0.25 & 0.25 & 0 \\ \hline
 3 & 0.667 & 0.667 & 0.667 & 0.333 & 0 \\ \hline
