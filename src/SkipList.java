@@ -2,7 +2,7 @@
 
 import java.util.Random;
 
-public class SkipList implements Set
+public class SkipList implements Set, java.io.Serializable
 {
 	public static void main(String[] args) {
 		SkipList skipList = new SkipList();
@@ -15,7 +15,7 @@ public class SkipList implements Set
 		System.out.println("99: " + skipList.contains(99));
 		System.out.println(skipList);
 	}
-	private class Node
+	private class Node implements java.io.Serializable
 	{
 		public Comparable key;
 		public long level;

@@ -1,4 +1,4 @@
-
+//http://users.cis.fiu.edu/~weiss/dsaajava/code/DataStructures/AvlTree.java
 
 // BinarySearchTree class
 //
@@ -20,7 +20,28 @@
  * 
  * @author Mark Allen Weiss
  */
-public class AvlTree implements Set{
+public class AvlTree implements Set, java.io.Serializable {
+	
+	private static class AvlNode implements java.io.Serializable {
+		// Constructors
+		AvlNode(Comparable theElement) {
+			this(theElement, null, null);
+		}
+
+		AvlNode(Comparable theElement, AvlNode lt, AvlNode rt) {
+			element = theElement;
+			left = lt;
+			right = rt;
+			height = 0;
+		}
+
+		// Friendly data; accessible by other package routines
+		Comparable element; // The data in the node
+		AvlNode left; // Left child
+		AvlNode right; // Right child
+		int height; // Height
+	}
+
 	/**
 	 * Construct the tree.
 	 */

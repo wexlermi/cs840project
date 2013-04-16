@@ -2,7 +2,7 @@
 
 import java.util.Random;
 
-public class SkipLift implements Set {
+public class SkipLift implements Set, java.io.Serializable {
 	public static void main(String[] args) {
 		SkipLift skipLift = new SkipLift();
 		for (int i = 1; i < 100; i++) {
@@ -15,14 +15,14 @@ public class SkipLift implements Set {
 		System.out.println(skipLift);
 	}
 
-	private class Node {
-		public long value;
+	private class Node implements java.io.Serializable{
+		public Comparable value;
 		public long level;
 		public Node next;
 		public Node prev;
 		public Node down;
 
-		public Node(long value, long level) {
+		public Node(Comparable value, long level) {
 			this.value = value;
 			this.level = level;
 		}
@@ -36,7 +36,7 @@ public class SkipLift implements Set {
 	private Random random;
 	private long size;
 	private double p;
-	private static final long MIN_VALUE = Long.MIN_VALUE;
+	private static final Comparable MIN_VALUE = Long.MIN_VALUE;
 
 	private long randomLevel() {
 		long level = 0;
@@ -54,7 +54,7 @@ public class SkipLift implements Set {
 		p = 0.5;
 	}
 
-	public void insert(Long value) {
+	public void insert(Comparable value) {
 		long level = randomLevel();
 		Node newNode = new Node(value, level);
 		if (level >= 1)
@@ -71,7 +71,7 @@ public class SkipLift implements Set {
 				while (cur.down == null) {
 					cur = cur.prev;
 				}
-				if (cur.value == MIN_VALUE && cur.down.level < level
+				if (cur.value.equals(MIN_VALUE) && cur.down.level < level
 						&& level < cur.level) {
 					Node newLevelHead = new Node(MIN_VALUE, level);
 					newLevelHead.down = cur.down;
@@ -79,7 +79,7 @@ public class SkipLift implements Set {
 				}
 				cur = cur.down;
 			}
-			while (cur.next != null && cur.next.value <= value) {
+			while (cur.next != null && cur.next.value.compareTo(value)<= 0) {
 				cur = cur.next;
 			}
 
@@ -102,18 +102,18 @@ public class SkipLift implements Set {
 		size++;
 	}
 
-	public boolean contains(long value) {
+	public boolean contains(Comparable value) {
 		Node cur = head;
-		long pred = MIN_VALUE;
+		Comparable pred = MIN_VALUE;
 		while (cur.value != value && cur.level > 0){
 			while (cur.down == null){
 				cur = cur.prev;
 			}
 			cur = cur.down;
-			while (cur.next != null && cur.next.value <= value){
+			while (cur.next != null && cur.next.value.compareTo(value) <= 0){
 				cur = cur.next;
 			}
-			if (pred < cur.value){
+			if (pred.compareTo(cur.value) < 0){
 				pred = cur.value;
 			}
 		}
@@ -139,20 +139,7 @@ public class SkipLift implements Set {
 	}
 
 	@Override
-	public void insert(Comparable data) {
-		insert((Long)data);
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean contains(Comparable data) {
-		return contains((Long)data);
-	}
-
-	@Override
 	public void delete(Comparable data) {
-		delete((Long)data);
 		// TODO Auto-generated method stub
 		
 	}

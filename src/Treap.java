@@ -21,7 +21,7 @@ import java.util.Random;
  * 
  * @author Mark Allen Weiss
  */
-public class Treap implements Set {
+public class Treap implements Set, java.io.Serializable {
 	
     // Basic node stored in treaps
     // Note that this class is not accessible outside
