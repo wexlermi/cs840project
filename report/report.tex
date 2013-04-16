@@ -67,51 +67,37 @@
 
 \begin{document}
 
-\title{\textsc{CREST-Z3} - Automated Test Generation Capable of Nonlinear Constraints\\[12pt]
-Project for CS846}
+\title{ Skip Lists, Jump Lists, and Other Randomized Data Structures for Maintaining Ordered Sets}
 
-\author{X. Lan, M. Wexler, A. Heinle}
+\author{Bairong Lei, Michael Wexler}
 
 \institute{University of Waterloo, David R. Cheriton School of Computer Science}
 
 \maketitle
 
 \begin{abstract}
-  In this project, we will explore \textsc{CREST-Z3} \cite{CRESTZ3}, an automated test case generator for C-programs. It is an extension of the tool \textsc{CREST} \cite{CREST} capable of solving non-linear constraints in the process of generating tests. We will discuss its capabilities, and the practical and theoretical limitations of this tool.
+  In this project, we will discuss several probabalistic data structures for maintaining ordered sets. These
+  data structures use probabalistic methods to keep balanced, which helps to avoid skewed distributions that
+  can lead to excessive running times. 
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction}
 
-In the beginning of the course, there was a presentation given on the
-paper \cite{godefroid2005dart}. The authors of this paper presented an
-automated way of generating test sets for given programs written in
-the programming language \textsc{C}. The main principle of that tool
-appears in the literature as \textbf{Concolic Testing} (this terminology appeared
-for the first time in the paper \cite{sen2005cute}).
+The need for ordered sets is very common in computer science. By ordered set, we mean a typical set data structure which has the additional property of maintaining the order of its elements. Programmers often need
+such a structure in order to determine if a given element is in the set, and also to find the nearest predecessor for a given element. Given the functionality of an ordered set, it can be extended so that every 
+key maps to a certain value. This would essentially be a dictionary data structure. One would hope that the most common dictionary operations would take O(log n), or better yet, O(1) time.
 
-Informally speaking, concolic testing refers to the concrete
-execution of a program, given either random or specifically chosen
-values for the variables. During this execution, one collects symbolic
-conditions on the variables in order to reach code lines in which a branch occurs
-(e.g. induced by an \texttt{if}-statement). Those conditions are fed
-to a theorem prover, in order to solve for possible variable values to
-enter each branch. With that, people are trying to generate test sets
-that satisfy the best coverage of the code -- in terms of nodes in the
-control flow graph -- as possible.
+There has been much work in developing set data structures that provide O(log n) lookup time. Examples of these are hash-tables, AVL trees, and red-black trees. In addition to quick lookup times, AVL trees and red-black trees have the additional property of being able to provide O(log n) time for the next-predecessor operation, which, for a given key, will give the smallest key that is greater than that key.
 
-\textsc{CREST}, in its original version, used a theorem prover called
-\textsc{YICES} (\cite{dutertre2006yices}) for the part of solving
-conditions to enter a branch. It is a powerful tool, yet it has a
-significant weakness: it can only deal with linear equations. This is
-a strong restriction, since, for example, an equation like
-$$x^2 = 14 \mod 47$$
-for $x \in \ZZ$ could not be resolved.
-Also in other concolic testing tools like \textsc{CUTE}
-(\cite{sen2005cute}), \textsc{DART},
-\textsc{EXE} (\cite{cadar2008exe}) and \textsc{PathCrawler}
-(\cite{williams2005pathcrawler}), only linear equations are solvable.
+For the afforementioned dictionary data structures, there is often the occurence where 
+
+For instance, for a given n, if we were to insert the sequence 1 2 ... n into a normal binary search tree, we would end up having a very skewed structure, which would could take O(n) time to find an element. This is the reason AVL and red-black trees were developed. They use deterministic methods to perform self-balancing, so the skewed distribution never occurs.
+
+The afforementioned data structures in their classical implementations all use deterministic methods for organizing their data.  Oftentimes, one wants to put a certain element of randomness into their dictionary data structures in order to avoid situations where their data structure becomes skewed. In this paper we will discuss various data structures that use randomness in order to maintain a level of balance, to avoid skewed distributions.
+
+This paper is organized as follows: section \ref{sctn:randomized_data_structuresl}
 
 This is the case for a good reason, as we will see in section \ref{sctn:Z3} where we discuss computational limitations we have considering nonlinear equations.
 
