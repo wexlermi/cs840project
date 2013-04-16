@@ -64,7 +64,8 @@ public class JumpList  implements OrderedSet {
 		for (int i = 0; i < tItems.length; i++){
 			int target_item = tItems[i];
 			System.out.println("Inserting: " + target_item + "\n");
-			jl.redu_insert(target_item);
+			jl.insert(target_item);
+			//jl.redu_insert(target_item);
 			//jl.dj_insert(target_item);
 		}
 		jl.print_list();
@@ -370,6 +371,7 @@ public class JumpList  implements OrderedSet {
 	@Override
 	public void insert(long data) {
 		// TODO Auto-generated method stub
-		
+		this.redu_insert((int)data);
+		//this.dj_insert((int)data);
 	}
 }
