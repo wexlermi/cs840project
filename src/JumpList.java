@@ -37,8 +37,10 @@ public class JumpList  implements OrderedSet {
 		for (int i = oList.length-1; i >= 0; i--)
 		{
 			int randomNum = (int) (Math.random() * 100);
-			while (Arrays.binarySearch(oList, randomNum) >= 0)
+			while (Arrays.binarySearch(oList, randomNum) >= 0){
+				System.out.println("Number is in the list. Regenerating......");
 				randomNum = (int) (Math.random() * 100);
+			}
 			oList[i] = randomNum;
 		}
 		Arrays.sort(oList);
@@ -62,7 +64,8 @@ public class JumpList  implements OrderedSet {
 		for (int i = 0; i < tItems.length; i++){
 			int target_item = tItems[i];
 			System.out.println("Inserting: " + target_item + "\n");
-			jl.insert(target_item);
+			jl.redu_insert(target_item);
+			//jl.dj_insert(target_item);
 		}
 		jl.print_list();
 		
@@ -107,17 +110,18 @@ public class JumpList  implements OrderedSet {
 		return x.nextNode;
 	}
 
-
-	public void insert(Comparable data){
+	// redundant insert method
+	// rebuild all the jump links during each insertion.
+	public void redu_insert(Comparable data){
 		boolean found = false;
 		JumpListNode x = this.headNode;
 
 		if (x != null && x.value.compareTo(data) == 0){
-			System.out.println("Target Item: " + data + " is in the jumplist already.");
+			System.out.println("Target Item: " + data + " is in the header of jumplist already.");
 			return;
 		}
 		if (this.length == 1 && x.value.compareTo(data) == 0){
-			System.out.println("Target Item: " + data + " is in the jumplist already.");
+			System.out.println("Target Item: " + data + " is in the header of jumplist already.");
 			return;
 		}
 
@@ -132,15 +136,17 @@ public class JumpList  implements OrderedSet {
 			else {
 				if (x.nextNode != null && x.nextNode.value.compareTo(data) == 0)
 					found = true;
+				else if (x.nextNode == null && x.value.compareTo(data) == 0)
+					found = true;
 				break;
 			}
 		}
 
-		if (!found)
+		/*if (!found)
 		{
 			if (x.nextNode != null && x.nextNode.value.compareTo(data) == 0)
 				found = true;
-		}
+		}*/
 		if (found)
 		{
 			System.out.println("Target Item: " + data + " is in the jumplist already.");
@@ -149,19 +155,101 @@ public class JumpList  implements OrderedSet {
 
 		System.out.println("Beign to insert item: " + data);
 		JumpListNode newNode = new JumpListNode(data);
-		if (x.nextNode != null)
+
+		if (x.value.compareTo(data) < 0)
 		{
-			newNode.nextNode = x.nextNode;
-			x.nextNode = newNode;
+			if (x.nextNode != null)
+			{
+				newNode.nextNode = x.nextNode;
+				x.nextNode = newNode;	
+			}
+			else
+			{
+				x.nextNode = newNode;
+			}	
+		}
+		else if (x.value.compareTo(data) > 0)
+		{
+			// new item inserted to the left of the item (header case)
+			newNode.nextNode = x;
+			if (x == this.headNode)
+				this.headNode = newNode;
 		}
 		else
 		{
-			x.nextNode = newNode;
+			System.out.println("Target Item: " + data + " is in the jumplist already.");
+			return;	
 		}
+		
 
 		this.length++;
-		x = this.headNode;
+		//x = this.headNode;
 		this.build_perfect_jumplist(this.headNode, this.length);
+	}
+
+	// insertion algorithm from the deterministic jumplist paper
+	// there is a defect in the paper's algorithm when the first 
+	// inserted item is less than the header of the list. In this
+	// case the item somehow is inserted into the second place.
+	public void dj_insert(Comparable data){
+		if (this.contains(data))
+		{
+			System.out.println("Target Item: " + data + " is in the jumplist already.");
+			return;
+		}
+
+		JumpListNode x = this.headNode;
+		JumpListNode y = new JumpListNode(data);
+
+		while (x.jumpToNode != x)
+		{
+			double alpha = 0.4;	//0 < alpha < 0.5; alpha could be 1 - 1/sqrt(2)
+			double temp = (double)(x.ncount + 1)/(2 + x.ncount + x.jcount);
+			if ((1 - alpha) < temp && temp < alpha){
+				System.out.println("Calling build_perfect_jumplist()...........");
+				this.build_perfect_jumplist(x, (1 + x.ncount + x.jcount));
+			}
+			if (x.jumpToNode.value.compareTo(data) <= 0)
+			{
+				x.jcount++;
+				x = x.jumpToNode;
+			}
+			else
+			{
+				x.ncount++;
+				if (x.nextNode.value.compareTo(data) <= 0)
+					x = x.nextNode;
+				else
+					break;
+			}
+		}
+
+		y.nextNode = x.nextNode;
+		x.nextNode = y;
+
+		if (x.jumpToNode == x){
+			x.jumpToNode = y;
+			x.jcount = 1;
+		}
+		else if (x.jumpToNode != y.nextNode){
+			while (y.ncount > 1){
+				y.jumpToNode = y.nextNode.jumpToNode;
+				y.jcount = y.nextNode.jcount;
+				y.ncount = y.nextNode.ncount + 1;
+				y = y.nextNode;
+			}
+			if (y.jumpToNode == y.nextNode){
+				y.jumpToNode = y;
+				y.jcount = 0;
+			}
+			else
+			{
+				y.jumpToNode = y.nextNode;
+				y.jcount = 1;
+				y.ncount = 0;
+			}
+		}
+		this.length++;
 	}
 
 	public boolean contains(Comparable data)
