@@ -135,6 +135,10 @@ While the above description of a linked-list seems good at first, we reach a pro
 
 cite2: \url{http://en.wikipedia.org/wiki/Skip_list}
 
+\subsection{Skip lifts}
+
+In \cite{skip_lift} Bose, Douïeb, Morin talk about an improvement to the skip list called the skip lift.
+
 The main steps are:
 \begin{enumerate}
   \item Including the \texttt{crest.h} header file of the
@@ -169,7 +173,7 @@ instructions, one runs inside the \texttt{bin} folder of the project
 the program \texttt{crestc} with the instructed file as input. This
 will generate the control flow graph and will collect initial information
 about the program. For this code analysis step, the developers of
-\textsc{CREST} utilize a tool called \textsc{CIL} (\cite{necula2002cil}).
+\textsc{CREST} utilize a tool called.
 
 As a result, in the same folder as the instructed file, several other
 files will appear, including the compiled version of the
@@ -194,7 +198,6 @@ $\{$\texttt{dfs}, \texttt{cfg}, \texttt{random},
 \end{center}
 \end{itemize}
 For details on the respective search strategies consider
-\cite{CREST}.
 
 An example of this would be:
 \begin{verbatim}
@@ -329,7 +332,7 @@ Even though both \textsc{Z3} as well as \textsc{YICES} are capable of
 handling array types, \textsc{CREST} does not support that as an
 observable type. This can be seen as a flaw, even though there is a
 workaround to this: In the original \textsc{CREST} paper
-(\cite{CREST}), the authors were testing their software on the open
+(), the authors were testing their software on the open
 source program \textsc{grep} with a very high coverage rate (60\% of
 the estimated coverable branches).
 
@@ -378,13 +381,13 @@ This section is dedicated especially to \textsc{Z3} and some theory
 around solving nonlinear equations.
 
 \subsection{Introduction to Z3}
-The tool \textsc{Z3} \cite{de2008z3}  was developed by researchers from \textsc{Microsoft} to decide -- if
+The tool \textsc{Z3}  was developed by researchers from \textsc{Microsoft} to decide -- if
 possible -- ``Satisfiability Modulo Theories'' (abbreviated SMT)
 problems. These problems are given in first order logic and can be
 seen as an extension to the satisfiability problem in predicate logic
 (SAT), by introducing datatypes like numbers and their respective
 operations. A standard to represent those formulas in an automatically
-readable form was developed in the \textsc{SMT-LIB} project  \cite{barrett2010smt}.
+readable form was developed in the \textsc{SMT-LIB} project .
 The developers of \textsc{Z3} are using this standard as their
 internal representation.
 
@@ -429,14 +432,12 @@ x_n, n \in \NN$, and a boolean expression inside an if statement that
 evaluates to true if and only if a polynomial given in those variables
 is zero for some choice of $x_1, \ldots, x_n$. Finding a solution for
 the $x_i$ is the so-called "Hilbert's tenth problem"
-\cite{davis1984hilbert}, which was proven to be undecidable
-\cite{matiyasevich1970enumerable}.
 
 Despite the intractability of this problem, one can always try to find solutions and cancel the
 computations after a certain amount of time.
 
 Given a set of polynomial equations, the status quo to find solutions
-is to first calculate the Gr\"obner basis of this system (originated by B. Buchberger in his PhD Thesis, consider e.g. in \cite{buchberger1970algorithmisches}). This can be seen as a
+is to first calculate the Gr\"obner basis of this system (originated by B. Buchberger in his PhD Thesis, consider e.g. in . This can be seen as a
 simplification of the system, which leads in the case of the existence
 of only finitely many solutions directly to the solutions. Inside the
 source code of \textsc{Z3}, we could also find an implementation of an
@@ -444,7 +445,7 @@ algorithm to calculate those bases.
 
 But there is one problem to this approach: calculating a Gr\"obner
 basis has double exponential complexity, independent of the choice
-of the algorithm chosen to compute it (\cite{mayr1982complexity}). Therefore,
+of the algorithm chosen to compute it . Therefore,
 computations can take a long time, and the output may be quite simple, but is still hard to utilize it for finding the solutions. The next subsection will provide an example to illustrate
 this fact.
 
@@ -491,7 +492,7 @@ solving for integer values is, in general, undecidable.
 
 Let us look at the Gr\"obner basis for this system, which we
 calculated using the computer algebra system \textsc{Singular}
-\cite{Singular:2012}. The output is a polynomial system that fits into
+ The output is a polynomial system that fits into
 a file of the size of 283KB. We will give a short snapshot of one
 element in the output for the sake of visualization:
 
@@ -518,7 +519,7 @@ Of course, one can also try to solve those equations directly using \textsc{Sing
 state-of-the-art computer algebra systems. We observed that those will
 not provide the easy solution that we know about this system.
 
-The computer algebra system \textsc{Maple} (\cite{Maple}) e.g. outputs the following:
+The computer algebra system \textsc{Maple} e.g. outputs the following:
 \begin{verbatim}
 {w = w,
 x = RootOf(13*w*_Z^6-5*w*_Z^5+13*w^2*_Z^3+(-5*w^2+20475*w)
@@ -535,12 +536,12 @@ of $x,y$ and $z$. Furthermore, the solution of \textsc{Maple}
 depends on algebraic extensions of the ground field (usually chosen to
 be $\QQ$).
 
-The computer algebra system \textsc{Sage} (\cite{sage}), which utilizes
-\textsc{Maxima} (\cite{maxima}) for solving such equations, fails to
+The computer algebra system \textsc{Sage} , which utilizes
+\textsc{Maxima} for solving such equations, fails to
 output any solution whatsoever.
 
 The last computer algebra system that we tested for those purposes was
-\textsc{Mathematica} \cite{wolfram1999mathematica}, in the context of
+\textsc{Mathematica}, in the context of
 \textsc{Wolfram Alpha}\\ (\url{http://www.wolframalpha.com}). It found
 several solutions, but not ones with integer values. One solution was,
 for example:
@@ -562,11 +563,11 @@ available, yet it belongs to the group of the most powerful
 ones. Other tools that are capable of solving complex SMT's and that use the
 same input as \textsc{Z3} are, for instance:
 \begin{itemize}
-  \item \textsc{Alt-Ergo} (\cite{bobotalt}) and
-  \item \textsc{CVC4} (\cite{barrett2011cvc4}).
+  \item \textsc{Alt-Ergo} and
+  \item \textsc{CVC4}.
 \end{itemize}
 
-In the original \textsc{CREST} project, \textsc{YICES} (\cite{dutertre2006yices}) was used for
+In the original \textsc{CREST} project, \textsc{YICES}  was used for
 solving. It was not capable of nonlinear constraints, but accepted
 input in the SMT-LIB standard. Therefore, replacing the SMT-solver in
 the \textsc{CREST} project took only the instrumentation effort, which
@@ -591,8 +592,7 @@ In this section, we will discuss some experiments on existing software
 projects done with
 \textsc{CREST}.
 
-We will start by summarizing evaluations done in \cite{CREST} and
-\cite{CRESTZ3}.
+We will start by summarizing evaluations done in 
 
 After that, we will discuss project types where evaluations of
 nonlinear equations are likely to be found in \textsc{C/++} programs, and how common the use
@@ -603,14 +603,14 @@ examine some key metrics that give insight into the accuracy and performance of 
 
 \subsection{Summary of Former Evaluations}
 
-The author of \cite{CREST} has tested the original program on three
+The author of  has tested the original program on three
 different source codes:
 
 \begin{itemize}
-  \item \textsc{Vim} (\cite{oualline2001vi}), $\sim 150,000$locl
+  \item \textsc{Vim} , $\sim 150,000$locl
   \item \textsc{Grep} (\url{http://www.gnu.org/software/grep/}), $\sim
     15,000$loc
-  \item \textsc{Replace} (\cite{harrold2010siemens}), $\sim 600$loc
+  \item \textsc{Replace} , $\sim 600$loc
 \end{itemize}
 
 He was able to cover over 90\% of \textsc{Replace} within some
@@ -620,7 +620,7 @@ using different search strategies. For \textsc{Vim}, he only instructed \textsc{
 sample input. Within 2-3 hours he was able to cover up to one third
 of all branches that were reachable.
 
-In the paper about \textsc{CREST-Z3} (\cite{CRESTZ3}), one can only
+In the paper about \textsc{CREST-Z3} , one can only
 find simple proof of concepts that it extends the classical
 \textsc{CREST}. A large test on real world programs has not been made.
 
@@ -648,8 +648,8 @@ simple tests of the following format:
 
 Those examples are not very hard to solve.
 
-Looking at the source code of the computer algebra systems \textsc{Singular} (\cite{Singular:2012})
-and \textsc{GAP} (\cite{GAP4}), where we assumed to find examples,
+Looking at the source code of the computer algebra systems \textsc{Singular} 
+and \textsc{GAP} , where we assumed to find examples,
 revealed that there is no occurrence of boolean expressions consisting
 of nonlinear expressions to be
 found in the code.
@@ -666,7 +666,7 @@ nonlinear equations is much higher.
 
 The first type of programs where those types of equations do appear
 are coming from the field of computer graphics. In the technique called ``ray
-tracing'' (\cite{glassner1989introduction}) for example, they are very common. The following code snippet serves as an example in what way one finds them there (taken from \url{http://www.codermind.com/articles/Raytracer-in-C++-Part-I-First-rays.html}):
+tracing'' for example, they are very common. The following code snippet serves as an example in what way one finds them there (taken from \url{http://www.codermind.com/articles/Raytracer-in-C++-Part-I-First-rays.html}):
 \begin{verbatim}
 [...]
 [1] double B = r.dir * dist;
@@ -687,13 +687,13 @@ This code snippet furthermore shows an inconvenience we would obtain
 if we would allow floating point numbers, namely the square root use
 in line 5 and 6 and the boolean expression based on it in line 9. There are publications on ways to define square root and other
 floating point typical operations that extend \textsc{SMT-LIB},
-e.g. \cite{rummer2010smt}, and the basic preliminaries are included in
+e.g. , and the basic preliminaries are included in
 the \textsc{SMT-LIB} version 2.0. Nonetheless, we could not find the
 full support of the arithmetic in the solvers. If one would extend
 \textsc{CREST-Z3} to also handle floating point numbers, this problem
 should also be taken into consideration.
 
-Another area where we found boolean expressions based on nonlinear equations in floating point numbers were algorithms coming from finance. There is an interesting collection of \textsc{C++} programs in \cite{odegaard2003financial}. The way they appear there mostly is in converging constraints and in early termination of a program if a certain formula is fulfilled. The same holds for algorithms coming from numerics; consider for example the project \textsc{LAMMPS} (Mollecular Dynamics Simulator, \cite{plimpton2007lammps}).
+Another area where we found boolean expressions based on nonlinear equations in floating point numbers were algorithms coming from finance. There is an interesting collection of \textsc{C++} programs in. The way they appear there mostly is in converging constraints and in early termination of a program if a certain formula is fulfilled. The same holds for algorithms coming from numerics; consider for example the project \textsc{LAMMPS} (Mollecular Dynamics Simulator, 
 
 Summa summarum one can say that considering nonlinear constraints, in practice it is only reasonable to additionally consider them if also floating point numbers are supported. For the supported datatypes, one rarely finds code where those play a significant, non-trivial role.
 
@@ -819,7 +819,7 @@ Concerning the question of which problem solver to use, we have seen that there 
 
 A possible future task could be to deal with the constraints of \textsc{CREST(-Z3)}. Resolving them is not trivial. Furthermore, one could make the solving process more flexible, i.e. the solver replacable without any instrumentation, and possibly having several by hand at once.
 
-Another future task is related to the question whether we are content with just node coverage on the control flow graph or not. \textsc{CREST-Z3} is performing only node coverage, and maybe it would be interesting to also perform some criteria like prime path coverage (see \cite{ammann2008introduction}). As with considering paths, we also gain more constraints on our variables, it might lead to an easier way to solve for those variables or prove the infeasibility. It would lead to a more flexible way of test generation that would be of interest for academia as well as for industry.
+Another future task is related to the question whether we are content with just node coverage on the control flow graph or not. \textsc{CREST-Z3} is performing only node coverage, and maybe it would be interesting to also perform some criteria like prime path coverage (see ). As with considering paths, we also gain more constraints on our variables, it might lead to an easier way to solve for those variables or prove the infeasibility. It would lead to a more flexible way of test generation that would be of interest for academia as well as for industry.
 
 %Here: Extension to other programming languages? Or even Computer algebra systems?
 %         Feasible for real world, as conditions do not get very complicated in general
@@ -829,6 +829,6 @@ Another future task is related to the question whether we are content with just 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliographystyle{plain}
-\bibliography{report}
+\bibliography{report1}
 
 \end{document}
