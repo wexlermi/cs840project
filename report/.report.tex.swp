@@ -137,6 +137,75 @@ While the above description of a linked-list seems good at first, we reach a pro
 
 In \cite{skip_lift} Bose, Douïeb, Morin talk about an improvement to the skip list called the skip lift. A skip lift is a skip list in which every element only has the top two nodes. The rest are deleted. This greatly reduces the size of the skip list.
 
+\subsection{Jump lists}
+
+We have found three invariants of the jumplist data structures. These three types of jumplists distinguish each other by their approaches to establish the jump links for each node in the list. In the original paper “Randomized jumplists - a Jump-and-Walk Dictionary Data Structure” by Frederic Cazals and Marianne Durand, a jumplist is a sorted single or double linked list. This linked list is a circular linked list with an empty value header. Each node has a key value and a next pointer to connect its immediate successor. Meanwhile, each node has a jump pointer that enables it to jump over several of its successors to reach one of its successor. The link between a node and the target node its jump pointer points to is known as an arch. The arch of the header node of the jumplist is called the fundamental arch. The jump pointers are created as the followow: The node pointed by the jump pointer of the header of the list is selected randomly among the rest nodes of the list. This assignment splits the list into two independent sublists which are built recursively using the same random procedure. During this construction the jump pointers do not cross each other. Each node of this jumplist can have more than one incoming jump pointers but have only one jump pointer pointing to its successor.
+
+The second invariant of the jumplist data structure is found in the paper “Bose, Prosenjit, Karim Douïeb, and Pat Morin. "Skip lift: a probabilistic alternative to red-black trees.” Combinatorial Algorithms. Springer Berlin Heidelberg, 2011. 226-237.” It has most of the same features as the previous paper for a jumplist. It maintains the core feature that the jump pointers do not cross over each other. Meanwhile, it ensures that each node has at most one jump pointer being pointed and only one jump pointer pointing to its successor. The below figure depicts a sample randomized jumplist with 21 nodes.
+
+
+\begin{figure}[here]
+\center
+\includegraphics[width=15cm]{images/jumplist}
+\caption{A randomized jumplist with 21 nodes}
+\label{fig:jumplist}
+\end{figure}
+
+
+The third invariant of the jumplist data structure comes from the paper “Elmasry, Amr. "Deterministic jumplists." Nordic Journal of Computing 12.1 (2005): 27-39.” Like the jumplist introduced by the original randomized jumplist paper, its jumplist maintains the set of common features such as the jump pointers can not cross over  each other. However, when the jump pointers are created for the jumplist, the procedure firstly selects the median node as the node pointed by the jump pointer of the jump list. This fundamental arch divides the whole list into two sublists evenly. These two sublists are then further split evenly and independently using the same process until it reaches the smallest sublists that have only one node and make its jump pointers pointing to itself. This process is called building a perfect jumplist.
+
+
+\begin{figure}[here]
+\center
+\includegraphics[width=12cm]{images/perfect_jumplist}
+\caption{A perfect jumplist with 23 elements}
+\label{fig:jumplist}
+\end{figure}
+
+
+Support methods:
+
+A jumplist usually has a set of common methods a dictionary data structure contains. Search, successor, insertion and deletion are the most popular methods a dictionary data structure supports. Our project aims to implement some of these methods for the jumplist data structure and evaluates and verify its theoretical running time estimation suggested from the Deterministic jumplists paper.
+
+Implementation:
+
+There are some challenges to implement the insertion and deletion methods for the jumplist, since the pseudo code for these two methods are missing in the original randomized jumplist paper. Although there has been a C plus plus implementation for the jumplist data structure in H. Brönnimann’s research work (\url{http://photon.poly.edu/~hbr/publi/jumplist.html}) from the Polytechnic University, unfortunately its source code is too old and severely handicapped for its missing search and insertion methods so that we have to pursure another solution. Another challenge is when we strive to use the insertion algorithm from the deterministic jumplist paper, we find there is a defect in that algorithm so that whenever there is an inserted item whose value is less than the value of the header node, the insertion method always places it to the second place of the list.
+
+We decide to implement our data structures in Java with the Eclipse IDE. For the time being, we only implement the search and insertion methods for the jumplist. The jumplist is initialized as an ordinary linked list at the beginning. A method called buildperfectjumplist is invoked to create the jump pointers for each node using the algorithm introduced in the deterministic jumplist paper. Meanwhile, each node updates its corresponding sizes of its next and jump sublists. The search method is implemented basing on its algorithm in the randomized jumplist paper to use the jump links as many as possible to skip nodes to speed up the search. For the insertion method we have implemented two versions to compare their running time. The first insert method is called djinsert which uses exactly the same algorithm introduced in the deterministic jumplist paper and inherits the first item insertion defect stated previously. After a new item is inserted, its jump pointer is updated as follows: The whole list is iterated to check whether there exists a node violating the balancing condition to rebuild the jump pointers for the entire list. If the jump pointer of the predecessor of the new item points to itself, its jump pointer is changed to point to the new item and the new item also inherits the jump pointer of its immediate successor. Meanwhile, the new item’s sizes of its next and jump sublists is updated respectively. On the other hand, the other insertion method follows the basic search algorithm to find the insertion point and inserts the new item as well as calling the buildperfectjumplist method to rebuild all the jump pointer for the entire list. This method resolves the first item insertion defect and does not need to maintain its sizes of next and jump sublists, but we expect the its running time is longer due to the redundancy of its jump pointer rebuilding procedure.
+
+Running result:
+
+
+Skynet:
+
+Data structure:
+
+For the time being of our project, we determine to consider the implementation for Skynet data structure as a potential future work. Skynet is a scalable overlay network designed to eliminate the disadvantages of peer-to-peer systems that have no control of data storage location and do not satisfy the need to restrain the routing path within a certain range. Essentially the structure of the Skynet is a circular double linked list. Each of node of this ring structure has a name ID field which is known as the data record key.  
+
+
+\begin{figure}[here]
+\center
+\includegraphics[width=12cm]{images/skynet}
+\caption{A Skynet with 8 elements}
+\label{fig:jumplist}
+\end{figure}
+
+From the above figure, we can see a Skynet structure [Harvey, Nicholas JA, et al. "Skipnet: A scalable overlay network with practical locality properties." Proceedings of the 4th conference on USENIX Symposium on Internet Technologies and Systems. Vol. 4. 2003.
+
+] with eight nodes each of which has an alphabetic character. Each Skynet node store 2log N pointers, where N is the number of nodes in this structure. This pointers facilitates a set of rings as paths for routing through nodes in the rings to search an item. The below figure demonstrates the same Skynet of the previous figure, which shows a diverse set of rings by selecting nodes of every level to establish interconnections. For example from the root ring, we may choose nodes of A, M, T and X to form a subring for level 1 overlay. We may also further select nodes of A, T and M, X to form two subrings for level 2 overlay from its upper level ring. Using this process to form smaller and smaller subrings until each node only has itself to form new ring. Meanwhile, each node assigned a numeric ID representing the routing path to reach it.
+
+Routing:
+
+Routing can follow a clockwise direction or a counter-clockwise direction. There are two routing approaches to support lexicographic searching. One approach is called “Routing by name ID”. For example, if we need to search node V from node A. This methodology begins routing from Ring 00. Since there are  only nodes A and T in the Ring 00, it goes down one level to the level 1 to route around the subring formed with nodes A, M, T and X. At this moment we can find node V either, so it goes down one level to the level 0 to route around the root ring and eventually find the node V. Another routing approach is called “Routing by numeric ID”. There is a hash function that transfers the key of the target item into its corresponding numeric ID. Using the same example to search node V. The hash function transfers the key V into “111”. Therefore, to search node V from node A, the first digit of the numeric ID “111” is “1” and guides the routing from the root ring to the right subring “Ring 1” in level 1. Then the second digit “1” directs the routing to the right subring “Ring 11” in level 2. Eventually the last digit “1” guides the search routing to the right subring “Ring 111” in level 3 and find the target node V. Potential future work for this structure can be implementing the insertion and deletion methods.
+
+\begin{figure}[here]
+\center
+\includegraphics[width=12cm]{images/skynet1}
+\caption{A ring hierarchy for an 8-node Skynet}
+\label{fig:jumplist}
+\end{figure}
+
+
 \section{Implementation}
 \label{sctn:implementation}
 
@@ -181,15 +250,6 @@ $\{$\texttt{dfs}, \texttt{cfg}, \texttt{random},
 \end{center}
 \label{DFS timings (in seconds)}
 \end{table}
-
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=9cm]{dfs_branch_coverage}
-\caption{}
-\label{figure:motivation}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Conclusion and Future Work}
 \label{sctn:Conclusion}
