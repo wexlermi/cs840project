@@ -1,7 +1,8 @@
 import java.util.Random;
 import java.util.Arrays;
 
-public class JumpList  implements OrderedSet {
+public class JumpList  implements Set {
+	static Random random = new Random();
 	public JumpListNode headNode;
 	private JumpListNode tailNode;
 	private int length;
@@ -24,6 +25,7 @@ public class JumpList  implements OrderedSet {
 	{
 		////Inititalize a jump list here
 		JumpList jl = new JumpList();
+		jl.insert(-575777525);
 		//jl.init_insert(55);
 		/*jl.init_insert(44);
 		jl.init_insert(33);
@@ -33,10 +35,10 @@ public class JumpList  implements OrderedSet {
 			jl.init_insert(i);
 		*/
 		//randomly generate numbers for jumplist
-		int oList[] = new int[10];
+		long[] oList = new long[10000];
 		for (int i = oList.length-1; i >= 0; i--)
 		{
-			int randomNum = (int) (Math.random() * 100);
+			long randomNum = random.nextInt();
 			while (Arrays.binarySearch(oList, randomNum) >= 0){
 				System.out.println("Number is in the list. Regenerating......");
 				randomNum = (int) (Math.random() * 100);
@@ -62,7 +64,7 @@ public class JumpList  implements OrderedSet {
 		// test insert method here
 		int tItems[] = new int[]{7, 50, 100}; 
 		for (int i = 0; i < tItems.length; i++){
-			int target_item = tItems[i];
+			long target_item = tItems[i];
 			System.out.println("Inserting: " + target_item + "\n");
 			jl.insert(target_item);
 			//jl.redu_insert(target_item);
@@ -369,9 +371,9 @@ public class JumpList  implements OrderedSet {
 	}
 
 	@Override
-	public void insert(long data) {
+	public void insert(Comparable data) {
 		// TODO Auto-generated method stub
-		this.redu_insert((int)data);
+		this.redu_insert(data);
 		//this.dj_insert((int)data);
 	}
 }

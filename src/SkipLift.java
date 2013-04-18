@@ -2,6 +2,7 @@
 
 import java.util.Random;
 
+
 public class SkipLift implements Set, java.io.Serializable {
 	public static void main(String[] args) {
 		SkipLift skipLift = new SkipLift();
@@ -21,7 +22,6 @@ public class SkipLift implements Set, java.io.Serializable {
 		public Node next;
 		public Node prev;
 		public Node down;
-
 		public Node(Comparable value, long level) {
 			this.value = value;
 			this.level = level;

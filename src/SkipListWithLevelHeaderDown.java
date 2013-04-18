@@ -22,6 +22,7 @@ public class SkipList implements Set, java.io.Serializable
 		public long level;
 		public Node next;
 		public Node down;
+		public Node levelHeadersDown;
 		
 		public Node(Comparable key, long level, Node next, Node down)
 		{
@@ -29,12 +30,29 @@ public class SkipList implements Set, java.io.Serializable
 			this.level = level;
 			this.next = next;
 			this.down = down;
+			if (key.equals(MIN_VALUE))
+				this.levelHeadersDown = down;
 		}
 		
 		public String toString(){
 			return key + "";
 		}
 	}
+	
+//	private class LevelHeaderNode extends Node
+//	{
+//		public LevelHeaderNode levelHeaderDown;
+//		
+//		public LevelHeaderNode(Comparable key, long level, Node next, LevelHeaderNode levelHeaderDown)
+//		{
+//			super(key, level, next, null);
+//			this.levelHeaderDown = levelHeaderDown;
+//		}
+//		
+//		public String toString(){
+//			return key + "";
+//		}
+//	}
 	
 	private Node _head;
 	private Random _random;
