@@ -180,7 +180,44 @@ For this project, we decided to implement the skip lift \cite{skip_lift}. We bui
  \section{Experiment and Analysis}
 \label{sctn:experiment}
 
-We thought it would be interesting to collect metrics on runtime and datasize of these data structures, to see which ones perform most competitively from a time and space performance perspective. We conjectured that the skip lift would take less space than the skip list.
+We thought it would be interesting to collect metrics on runtime and datasize of these data structures, to see which ones perform most competitively from a time and space performance perspective.
+
+For our experiment, we generated a test data set of one million randomly chosen integers. For each of our data structures, we measured the timing it would take to insert all the test data into the data structure, as well as the space occupied in memory of the data structure. Also, we made a random permutation of the elements in our data set, which represents a sequence of requests. For this sequence of requests, we measured the time it took to query all the elements for each data structure.
+
+
+\begin{table}[htbp]
+\caption{Timings for each data structure in milliseconds}
+\begin{center}
+\begin{tabular}{|r|r|r|r|r|r|}
+\hline
+Data Structure & Time to insert & Time to query \\ \hline
+AVLTree & 0.75 & 0.75 \\ \hline
+Treap & 0.75 & 0.75\\ \hline
+SkipList & 0.667 & 0.667  \\ \hline
+SkipLift & 0.625 & 0.75  \\ \hline
+JumpList & 0.6 & 0.7 \\ \hline
+\end{tabular}
+\end{center}
+\label{abc}
+\end{table}
+
+\begin{table}[htbp]
+\caption{Space occupied by the data structures}
+\begin{center}
+\begin{tabular}{|r|r|r|r|r|r|}
+\hline
+Data Structure & Space (megabytes) \\ \hline
+AVLTree & 0.75 \\ \hline
+Treap & 0.75\\ \hline
+SkipList & 0.667   \\ \hline
+SkipLift & 0.625  \\ \hline
+JumpList & 0.6 \\ \hline
+\end{tabular}
+\end{center}
+\label{abc}
+\end{table}
+
+We conjectured that the skip lift would take less space than the skip list.
 
 
 \begin{remark}
@@ -202,20 +239,6 @@ $\{$\texttt{dfs}, \texttt{cfg}, \texttt{random},
 \end{itemize}
 
 
-\begin{table}[htbp]
-\caption{DFS branch-coverage-ratio}
-\begin{center}
-\begin{tabular}{|r|r|r|r|r|r|}
-\hline
-1 & 1 & 1 & 1 & 1 & 1 \\ \hline
-2 & 0.75 & 0.75 & 0.25 & 0.25 & 0 \\ \hline
-3 & 0.667 & 0.667 & 0.667 & 0.333 & 0 \\ \hline
-4 & 0.625 & 0.75 & 0.25 & 0 & 0 \\ \hline
-5 & 0.6 & 0.7 & 0.6 & 0 & 0 \\ \hline
-\end{tabular}
-\end{center}
-\label{DFS timings (in seconds)}
-\end{table}
 
 \section{Conclusion and Future Work}
 \label{sctn:Conclusion}
