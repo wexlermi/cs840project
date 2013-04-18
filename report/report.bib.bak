@@ -12,7 +12,7 @@
   timestamp = {2013.04.15}
 }
 
-@ARTICLE{,
+@ARTICLE{Aragon1989,
   author = {C. Aragon and R. Seidel},
   title = {Randomized Search Trees},
   journal = {Proc. 30th IEEE Symposium on Foundations of Computer Science},
@@ -20,6 +20,17 @@
   pages = {540-546},
   owner = {mike},
   timestamp = {2013.04.17}
+}
+
+@ARTICLE{ElmasryMarch2005,
+  author = {Amr Elmasry},
+  title = {Deterministic jumplists},
+  journal = {Nordic Journal of Computing},
+  year = {March 2005},
+  volume = {Volume 12 Issue 1},
+  pages = {27 - 39},
+  owner = {mike},
+  timestamp = {2013.04.18}
 }
 
 @ARTICLE{jump_list,
@@ -55,9 +66,10 @@
   author = {Nicholas J.A. Harvey, John Dunagan, Michael B. Jones, Stefan Saroiu,
 	Marvin Theimer, and Alec Wolman},
   title = {SkipNet: A Scalable Overlay Network with Practical Locality Properties},
-  journal = {Microsoft Research},
-  year = {December 2002},
-  volume = {MSR-TR-2002-92},
+  journal = {Proceedings of the 4th conference on USENIX Symposium on Internet
+	Technologies and Systems},
+  year = {2003},
+  volume = {4},
   owner = {mike},
   timestamp = {2013.04.15}
 }
