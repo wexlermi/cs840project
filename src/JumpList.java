@@ -377,7 +377,8 @@ public class JumpList  implements Set {
 			init_insert(data);
 		}
 		// TODO Auto-generated method stub
-		this.redu_insert(data);
+		redu_insert(data);
+		//this.dj_insert(data);
 		//this.dj_insert((int)data);
 	}
 }

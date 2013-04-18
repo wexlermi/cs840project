@@ -105,7 +105,7 @@ public class SkipLift implements Set, java.io.Serializable {
 	public boolean contains(Comparable value) {
 		Node cur = head;
 		Comparable pred = MIN_VALUE;
-		while (cur.value != value && cur.level > 0){
+		while (!cur.value.equals(value) && cur.level > 0){
 			while (cur.down == null){
 				cur = cur.prev;
 			}
@@ -118,7 +118,7 @@ public class SkipLift implements Set, java.io.Serializable {
 			}
 		}
 		
-		return pred == value;
+		return pred.equals(value);
 	}
 
 	public String toString() {

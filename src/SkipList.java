@@ -3,12 +3,14 @@
 import java.util.Random;
 
 
-public class SkipList implements Set, java.io.Serializable
+public class SkipList implements Set
 {
 	public static void main(String[] args) {
 		SkipList skipList = new SkipList();
-		for (int i = 1; i < 100; i++) {
-			skipList.insert(i);
+		skipList.insert(150);
+		boolean has = skipList.contains(150);
+		for (int i = 100; i < 200; i++) {
+		//	skipList.insert(i);
 		}
 		System.out.println("3: " + skipList.contains(3));
 		System.out.println("322: " + skipList.contains(322));
@@ -16,7 +18,7 @@ public class SkipList implements Set, java.io.Serializable
 		System.out.println("99: " + skipList.contains(99));
 		System.out.println(skipList);
 	}
-	private class Node implements java.io.Serializable
+	private class Node
 	{
 		public Comparable key;
 		public long level;
@@ -85,7 +87,7 @@ public class SkipList implements Set, java.io.Serializable
 				
 				cur = cur.down;
 				continue;
-			} else if (cur.next.key == key) {
+			} else if (cur.next.key.equals(key)) {
 				return;
 			}
 			
@@ -102,7 +104,7 @@ public class SkipList implements Set, java.io.Serializable
 		Node cur = _head;
 		while (cur != null) {
 			if (cur.next == null || cur.next.key.compareTo(key) >= 0) {
-				if (cur.next != null && cur.next.key == key) {
+				if (cur.next != null && cur.next.key.equals(key)) {
 					cur.next = cur.next.next;
 				}
 				
@@ -123,7 +125,7 @@ public class SkipList implements Set, java.io.Serializable
 			if (cur.next == null || cur.next.key.compareTo(key) > 0) {
 				cur = cur.down;
 				continue;
-			} else if (cur.next.key == key) {
+			} else if (cur.next.key.equals(key)) {
 				return true;
 			}
 			
