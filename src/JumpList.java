@@ -24,7 +24,8 @@ public class JumpList  implements Set {
 	public static void main(String args[])
 	{
 		////Inititalize a jump list here
-		JumpList jl = new JumpList();
+		JumpList jl = new JumpList(500);
+		jl.init_insert(55);
 		jl.insert(-575777525);
 		//jl.init_insert(55);
 		/*jl.init_insert(44);
@@ -40,7 +41,7 @@ public class JumpList  implements Set {
 		{
 			long randomNum = random.nextInt();
 			while (Arrays.binarySearch(oList, randomNum) >= 0){
-				System.out.println("Number is in the list. Regenerating......");
+				//System.out.println("Number is in the list. Regenerating......");
 				randomNum = (int) (Math.random() * 100);
 			}
 			oList[i] = randomNum;
@@ -52,7 +53,7 @@ public class JumpList  implements Set {
 		
 		//build up the jump links here
 		jl.build_perfect_jumplist(jl.headNode, jl.length);
-		jl.print_list();
+		//jl.print_list();
 
 		// test search method here
 		/*int tItems[] = new int[]{2, 7, 13, 21}; 
@@ -70,7 +71,7 @@ public class JumpList  implements Set {
 			//jl.redu_insert(target_item);
 			//jl.dj_insert(target_item);
 		}
-		jl.print_list();
+		//jl.print_list();
 		
 
 	}
@@ -120,11 +121,11 @@ public class JumpList  implements Set {
 		JumpListNode x = this.headNode;
 
 		if (x != null && x.value.compareTo(data) == 0){
-			System.out.println("Target Item: " + data + " is in the header of jumplist already.");
+			//System.out.println("Target Item: " + data + " is in the header of jumplist already.");
 			return;
 		}
 		if (this.length == 1 && x.value.compareTo(data) == 0){
-			System.out.println("Target Item: " + data + " is in the header of jumplist already.");
+			//System.out.println("Target Item: " + data + " is in the header of jumplist already.");
 			return;
 		}
 
@@ -152,11 +153,11 @@ public class JumpList  implements Set {
 		}*/
 		if (found)
 		{
-			System.out.println("Target Item: " + data + " is in the jumplist already.");
+			//System.out.println("Target Item: " + data + " is in the jumplist already.");
 			return;	
 		}
 
-		System.out.println("Beign to insert item: " + data);
+		//System.out.println("Beign to insert item: " + data);
 		JumpListNode newNode = new JumpListNode(data);
 
 		if (x.value.compareTo(data) < 0)
@@ -180,7 +181,7 @@ public class JumpList  implements Set {
 		}
 		else
 		{
-			System.out.println("Target Item: " + data + " is in the jumplist already.");
+			//System.out.println("Target Item: " + data + " is in the jumplist already.");
 			return;	
 		}
 		
@@ -197,7 +198,7 @@ public class JumpList  implements Set {
 	public void dj_insert(Comparable data){
 		if (this.contains(data))
 		{
-			System.out.println("Target Item: " + data + " is in the jumplist already.");
+			//System.out.println("Target Item: " + data + " is in the jumplist already.");
 			return;
 		}
 
@@ -209,7 +210,7 @@ public class JumpList  implements Set {
 			double alpha = 0.4;	//0 < alpha < 0.5; alpha could be 1 - 1/sqrt(2)
 			double temp = (double)(x.ncount + 1)/(2 + x.ncount + x.jcount);
 			if ((1 - alpha) < temp && temp < alpha){
-				System.out.println("Calling build_perfect_jumplist()...........");
+				//System.out.println("Calling build_perfect_jumplist()...........");
 				this.build_perfect_jumplist(x, (1 + x.ncount + x.jcount));
 			}
 			if (x.jumpToNode.value.compareTo(data) <= 0)
@@ -286,7 +287,7 @@ public class JumpList  implements Set {
 	{
 		if (!this.contains(data))
 		{
-			System.out.println("Deleted Item: " + data + " is not in the list.");
+			//System.out.println("Deleted Item: " + data + " is not in the list.");
 			return;
 		}
 
@@ -372,6 +373,9 @@ public class JumpList  implements Set {
 
 	@Override
 	public void insert(Comparable data) {
+		if (headNode == null){
+			init_insert(data);
+		}
 		// TODO Auto-generated method stub
 		this.redu_insert(data);
 		//this.dj_insert((int)data);

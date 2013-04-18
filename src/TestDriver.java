@@ -5,11 +5,8 @@ import java.util.*;
 import com.javamex.classmexer.MemoryUtil;
 import com.javamex.classmexer.MemoryUtil.VisibilityFilter;
 
-import net.sourceforge.sizeof.SizeOf;
 //
 //import net.sourceforge.sizeof.SizeOf;
-
-import objectexplorer.MemoryMeasurer;
 
 public class TestDriver {
 	public static void main(String[] args) throws IOException {
@@ -50,7 +47,7 @@ public class TestDriver {
 		endTime = System.nanoTime();
 		duration = endTime - startTime;
 		long avlMemory = MemoryUtil.deepMemoryUsageOf(avlTree, VisibilityFilter.ALL);
-		System.out.println("avltreesize sizeof:"  + avlMemory);
+		System.out.println("avltreesize sizeof:"  + avlMemory/1048576.0);
 
 		System.out.println("AVL Tree duration: " + (double) duration
 				/ Math.pow(10, 6) + " ms");
@@ -61,7 +58,7 @@ public class TestDriver {
 		duration = endTime - startTime;
 		
 		long skipListMemory = MemoryUtil.deepMemoryUsageOf(skipList, VisibilityFilter.ALL);
-		System.out.println("skipListMemory sizeof:"  + skipListMemory);
+		System.out.println("skipListMemory sizeof:"  + skipListMemory/1048576.0);
 		System.out.println("skipList duration: " + (double) duration
 				/ Math.pow(10, 6) + " ms");
 
@@ -71,7 +68,7 @@ public class TestDriver {
 		duration = endTime - startTime;
 		
 		long skipLiftMemory = MemoryUtil.deepMemoryUsageOf(skipLift, VisibilityFilter.ALL);
-		System.out.println("skipLiftMemory sizeof:"  + skipLiftMemory);
+		System.out.println("skipLiftMemory sizeof:"  + skipLiftMemory/1048576.0);
 
 		System.out.println("skipLift duration: " + (double) duration
 				/ Math.pow(10, 6) + " ms");
@@ -82,7 +79,7 @@ public class TestDriver {
 		duration = endTime - startTime;
 		
 		long treapMemory = MemoryUtil.deepMemoryUsageOf(treap, VisibilityFilter.ALL);
-		System.out.println("treapMemory sizeof:"  + treapMemory);
+		System.out.println("treapMemory sizeof:"  + treapMemory/1048576.0);
 		
 		System.out.println("treap duration: " + (double) duration
 				/ Math.pow(10, 6) + " ms");
@@ -93,7 +90,7 @@ public class TestDriver {
 		duration = endTime - startTime;
 		
 		long jumpListMemory = MemoryUtil.deepMemoryUsageOf(jumpList, VisibilityFilter.ALL);
-		System.out.println("treapMemory sizeof:"  + jumpListMemory);
+		System.out.println("jumpListMemory sizeof:"  + jumpListMemory/1048576.0);
 		
 		System.out.println("jumpList duration: " + (double) duration
 				/ Math.pow(10, 6) + " ms");
@@ -101,9 +98,13 @@ public class TestDriver {
 	}
 
 	private static void loadSet(Set set, List<Long> numberList) {
+		int i = 0;
 		for (long num : numberList) {
 			try {
+				//if (i%10==0) 
+					//System.out.println(i);
 				set.insert(num);	
+				//i++;
 			}
 			catch (Exception e){
 				System.out.println("hello " + num);
