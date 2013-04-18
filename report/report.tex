@@ -8,56 +8,10 @@
 % Compile only with pdfLaTeX
 \usepackage[pdftex]{graphicx}
 
-\newcommand{\ZZ}{{\mathbb{Z}}}
-\newcommand{\QQ}{{\mathbb{Q}}}
-\newcommand{\RR}{{\mathbb{R}}}
-\newcommand{\CC}{{\mathbb{C}}}
-\newcommand{\NN}{{\mathbb{N}}}
-\renewcommand{\H}{{\mathcal{H}}}
-\renewcommand{\L}{{\mathcal{L}}}
-\newcommand{\F}{{\mathsf{F}}}
-\newcommand{\bigO}{{\mathsf{O}}}
-\newcommand{\R}{{\mathsf{R}}}
-\newcommand{\Fp}{{\mathbb{F}_p}}
-\newcommand{\Fq}{{\mathbb{F}_q}}
-\newcommand{\Fqd}{{\mathbb{F}_{q^d}}}
-\newcommand{\Fqe}{{\mathbb{F}_{q^e}}}
-\newcommand{\Fz}{{\F[z]}}
-\newcommand{\Fzf}{{\Fz /(f)}}
-\newcommand{\Fzfe}{{\Fz /(f^e)}}
-\newcommand{\Rn}{{\R^{n \times 1}}}
-\newcommand{\Rnn}{{\R^{n \times n}}}
-\newcommand{\Fden}{{\F^{den \times 1}}}
-\newcommand{\Fdenden}{{\F^{den \times den}}}
-\newcommand{\ZZp}{{\ZZ_p}}
-\newcommand{\ZZpe}{{\ZZ_{p^e}}}
-\newcommand{\nxn}{{n\times n}}
-\newcommand{\calI}{{\mathcal I}}
-
-\newcommand{\FD}{{\F[\partial;\sigma,\delta]}}
-\newcommand{\D}{{\partial}}
-\newcommand{\shift}{{\mathcal{S}}}
-\newcommand{\diff}{{\lower3pt\hbox{\large$'$}}}
-\renewcommand{\k}{{\mathsf{k}}}
-\newcommand{\lclm}{{\mbox{\upshape lclm}}}
-\newcommand{\lcrm}{{\mbox{\upshape lcrm}}}
-\newcommand{\gcld}{{\mbox{\upshape gcld}}}
-\newcommand{\gcrd}{{\mbox{\upshape GCRD}}}
-
-
-
-\newcommand{\smallskipback}{\vspace{-\smallskipamount}}
-\newcommand{\medskipback}{\vspace{-\medskipamount}}
-\newcommand{\bigskipback}{\vspace{-\bigskipamount}}
-
-
-
 %\reversemarginpar
 \makeatletter
 \@twosidefalse
 \makeatother
-%\renewcommand*{\marginfont}{\color{red}\bf}
-%\newcommand{\TODO}[1]{\marginnote[#1]{}}
 
 \textwidth180mm
 \hoffset-30mm
@@ -108,7 +62,7 @@ All test files and program code we describe in this report can be found in our \
 \label{sctn:randomized_data_structures}
 
 \subsection{Treaps}
-The first randomized data structure we will talk about is the treap. Treaps are at their foundation binary-search-trees, with a certain amount of randomness that allows them to remain balanced in the average case. Every element in a treap has the binary-search-tree property, such that all the nodes in its right subtree are greater than the root, and all the nodes in its left subtree are less than the root. However, every node in a treap contains a priority value, in which the priority of a treap node is always higher than that of its children. When we insert a new element into the treap, we randomly assign it a priority, which is a random integer from a sufficiently large range to ensure there are no collisions. Then we put the element in the treap, in the place it would go if it were considered only as a binary search tree. Once it is put in its proper place in the treap, a sequence of rotations are performed to restore the priority requirement, while still maintaining proper place to make sure its key is in the proper order.
+The first randomized data structure we will discuss is the treap \cite{Aragon1989}. Treaps are at their foundation binary-search-trees, with a certain amount of randomness that allows them to remain balanced in the average case. Every element in a treap has the binary-search-tree property, such that all the nodes in its right subtree are greater than the root, and all the nodes in its left subtree are less than the root. However, every node in a treap contains a priority value, in which the priority of a treap node is always higher than that of its children. When we insert a new element into the treap, we randomly assign it a priority, which is a random integer from a sufficiently large range to ensure there are no collisions. Then we put the element in the treap, in the place it would go if it were considered only as a binary search tree. Once it is put in its proper place in the treap, a sequence of rotations are performed to restore the priority requirement, while still maintaining proper place to make sure its key is in the proper order.
 
 \begin{figure}[here]
 \center
@@ -117,14 +71,16 @@ The first randomized data structure we will talk about is the treap. Treaps are 
 \label{fig:treap}
 \end{figure}
 
-Figure \ref{fig:treap} is an example of a very small treap. The letters represent keys, and have the in-order property one would expect in a binary search tree. The numbers represent the priorities, in which case we have a max-heap, since each node has a priority greater than its children.
+Figure \ref{fig:treap} is an example of a very small treap. The letters represent keys, and have the in-order property one would expect in a binary search tree. The numbers represent the priorities. In this case we have a max-heap, since each node has a priority which is a number greater than its children.
 
 \subsection{Skip lists}
-Skip lists are a randomized data structure that is inherently built upon ordinary linked-lists. Imagine we had a linked list of n numbers, in sorted order. If we had to search for an element x in this linked-list, it would be quite inefficient to linearly search for it. Instead, we can put pointers every other element, or every 3rd element, etc. This way, when searching for an element, we can first search through the top level, and once we find an element greater than it, we can drop down and search our original linked list.
+A skip-list \cite{skip_list} is a randomized data structure that is inherently built upon linked-lists. Imagine we had a linked list of $n$ numbers, in sorted order. If we had to search for an element $x$ in this linked-list, it would be quite inefficient to linearly search for it. To resolve this issue, we can put pointers every other element, or every 3rd element, etc. This way, when searching for an element, we can first search through the top level, and once we find an element greater than it, we can drop down and search our original linked list.
 
 We can repeat the process for the top linked list: put pointers to every other element. We keep repeating this process, where each higher level has half the pointers of the level below it, until we get a level which has 1 or 2 pointers. Then when we search for an element x, we start at the top list, skipping over elements that are less, then dropping down to lower and lower levels, repeating the process, until we either find the element we are looking for, or reach the bottom level and overshoot it, in which case we determine that the element does not exist in the skip list.
 
-While the above description of a linked-list seems good at first, we reach a problem for insertion and deletion, in which case the length of the levels no longer have length $2^i$. Instead, we decide to use probabalistic methods to keep our levels approximately of length $2^i$. We specify a varible $p$ which represents the probability that an element on level $i$ will appear on level $i+1$. The typical value is $p=\frac{1}{2}$. Every time we would like to insert a key $x$ into the skip-list, we first put it at level 0. Then, we "flip a coin" a certain amount of times, and while we are getting heads, we keep adding the element to higher and higher levels, until we get a tails, and then we stop. This will mathematically ensure that our skip-list has approximately half the number of nodes at higher and higher levels, and provides us with good performance for insert and delete operations, something that is quite hard to maintain in deterministic skip-lists.
+Skip-lists use probabalistic methods in order to determine how many levels of a skip-list a given element can be found on.. We specify a varible $p$ which represents the probability that an element on level $i$ will appear on level $i+1$. Every element appears on level 0, as we go to higher levels, we will find less and less elements. The typical value is $p=\frac{1}{2}$. Every time we would like to insert a key $x$ into the skip-list, we first put it at level 0. Then, we "flip a coin" a certain amount of times, and while we are getting heads, we keep adding the element to higher and higher levels, until we get a tails, and then we stop. This will mathematically ensure that our skip-list has approximately half the number of nodes at higher and higher levels.
+
+
 
 \begin{figure}[here]
 \center
@@ -133,15 +89,30 @@ While the above description of a linked-list seems good at first, we reach a pro
 \label{fig:skip_list}
 \end{figure}
 
+\begin{figure}[here]
+\center
+\includegraphics[width=7cm]{images/skip_list1}
+\caption{Example of a skip-list}
+\label{fig:skip_list}
+\end{figure}
+
 \subsection{Skip lifts}
 
 In \cite{skip_lift} Bose, Douïeb, Morin talk about an improvement to the skip list called the skip lift. A skip lift is a skip list in which every element only has the top two nodes. The rest are deleted. This greatly reduces the size of the skip list.
 
+\begin{figure}[here]
+\center
+\includegraphics[width=7cm]{images/skiplist_vs_skiplift}
+\caption{Skip-list (a)  vs. skip-lift (b)}
+\label{fig:skip_list}
+\end{figure}
+
+
 \subsection{Jump lists}
 
-We have found three invariants of the jumplist data structures. These three types of jumplists distinguish each other by their approaches to establish the jump links for each node in the list. In the original paper “Randomized jumplists - a Jump-and-Walk Dictionary Data Structure” by Frederic Cazals and Marianne Durand, a jumplist is a sorted single or double linked list. This linked list is a circular linked list with an empty value header. Each node has a key value and a next pointer to connect its immediate successor. Meanwhile, each node has a jump pointer that enables it to jump over several of its successors to reach one of its successor. The link between a node and the target node its jump pointer points to is known as an arch. The arch of the header node of the jumplist is called the fundamental arch. The jump pointers are created as the followow: The node pointed by the jump pointer of the header of the list is selected randomly among the rest nodes of the list. This assignment splits the list into two independent sublists which are built recursively using the same random procedure. During this construction the jump pointers do not cross each other. Each node of this jumplist can have more than one incoming jump pointers but have only one jump pointer pointing to its successor.
+Jump-lists \cite{jump_list} are sorted linked-lists, in which case search is expedited by putting "jump" pointers on several nodes, which serve as an "express-lane" for searching. During the course of this project, we came across three variations of the jumplist data structure. These three types of jumplists differ by their methods of establishing the jump links for each node in the list. In the original paper \cite{jump_list}, a jumplist is a sorted single or double linked list. This linked list is a circular linked list with an empty value header. Each node has a key value and a next pointer to connect its immediate successor. Meanwhile, each node has a jump pointer that enables it to jump over several of its successors to reach one of its successors. The link between a node and the target node its jump pointer points to is known as an arch. The arch of the header node of the jumplist is called the {\it fundamental arch}. The jump pointers are created as follows: The node pointed by the jump pointer of the header of the list is selected randomly among the rest of the nodes of the list. This assignment splits the list into two independent sublists which are built recursively using the same random procedure. During this construction, the jump pointers do not cross each other. Each node of this jumplist can have more than one incoming jump pointers, but have only one jump pointer pointing to its successor.
 
-The second invariant of the jumplist data structure is found in the paper “Bose, Prosenjit, Karim Douïeb, and Pat Morin. "Skip lift: a probabilistic alternative to red-black trees.” Combinatorial Algorithms. Springer Berlin Heidelberg, 2011. 226-237.” It has most of the same features as the previous paper for a jumplist. It maintains the core feature that the jump pointers do not cross over each other. Meanwhile, it ensures that each node has at most one jump pointer being pointed and only one jump pointer pointing to its successor. Figure 3 depicts a sample randomized jumplist with 21 nodes.
+The second invariant of the jumplist data structure is found in \cite{skip_lift}. It has most of the same features as the previous paper for a jumplist. It maintains the core feature that the jump pointers do not cross over each other. Meanwhile, it ensures that each node has at most one jump pointer being pointed and only one jump pointer pointing to its successor. Figure 3 depicts a sample randomized jumplist with 21 nodes.
 
 
 \begin{figure}[here]
@@ -152,7 +123,7 @@ The second invariant of the jumplist data structure is found in the paper “Bos
 \end{figure}
 
 
-The third invariant of the jumplist data structure comes from the paper “Elmasry, Amr. "Deterministic jumplists." Nordic Journal of Computing 12.1 (2005): 27-39.” Like the jumplist introduced by the original randomized jumplist paper, its jumplist maintains the set of common features such as the jump pointers can not cross over  each other. However, when the jump pointers are created for the jumplist, the procedure firstly selects the median node as the node pointed by the jump pointer of the jump list. This fundamental arch divides the whole list into two sublists evenly. These two sublists are then further split evenly and independently using the same process until it reaches the smallest sublists that have only one node and make its jump pointers pointing to itself. This process is called building a perfect jumplist. Figure 4 depicts an example of a perfect jumplist with 23 elements.
+The third invariant of the jumplist data structure comes from the paper “Elmasry, Amr. "Deterministic jumplists." Nordic Journal of Computing 12.1 (2005): 27-39.” Like the jumplist introduced by the original randomized jumplist paper, its jumplist maintains the set of common features such as the jump pointers can not cross over  each other. However, when the jump pointers are created for the jumplist, the procedure firstly selects the median node as the node pointed by the jump pointer of the jump list. This fundamental arch divides the whole list into two sublists evenly. These two sublists are then further split evenly and independently using the same process until it reaches the smallest sublists that have only one node and make its jump pointers pointing to itself. This process is called building a perfect jumplist. Figure ref{fig:jumplist} depicts an example of a perfect jumplist with 23 elements.
 
 
 \begin{figure}[here]
