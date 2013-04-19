@@ -14,29 +14,46 @@ public class JumpList  implements Set {
 	public JumpListNode headNode;
 	private JumpListNode tailNode;
 	private int length;
+	
+	private static class JumpListNode {
+		Comparable value;
+		JumpListNode nextNode;
+		JumpListNode jumpToNode;
+		/*boolean isHead;
+		boolean isTail;*/
+		int ncount;
+		int jcount;
+
+		public JumpListNode(Comparable value){
+			this.value = value;
+			this.nextNode = null;
+			this.jumpToNode = null;
+		}
+
+		public JumpListNode(){
+			this.nextNode = null;
+			this.jumpToNode = null;
+		}
+	}
 
 	public JumpList()
 	{
 		this.length = 0;
 		this.headNode = new JumpListNode();
-		//this.tailNode = null;
 	}
 
-	public JumpList(Comparable value)
+	private JumpList(Comparable value)
 	{
 		this.length = 1;
 		this.headNode = new JumpListNode(value);
-		//this.tailNode = null;
 	}
 
 	public static void main(String args[]) throws IOException 
 	{
-		/* Testing from testdata.txt */
 		Scanner in = new Scanner(new FileReader("testdata.txt"));
 		List<Long> numberList = new ArrayList<Long>();
 		while (in.hasNextLong()) {
 			long num = in.nextLong();
-			//System.out.println(num);
 			numberList.add(num);
 		}
 		JumpList jl = new JumpList();
@@ -52,7 +69,6 @@ public class JumpList  implements Set {
 			System.err.println("Exception: " + e.getMessage());
 		}
 		try {
-			//Collections.shuffle(numberList);
 			jl.print_list();
 			System.out.println("numberList size is " + numberList.size() + " 	numberList[-1] = " + numberList.get(numberList.size()-1));
 			System.out.println("jumplist size is " + jl.getLength() + " 	jumplist[0] = " + jl.getHeader().value);
@@ -93,7 +109,7 @@ public class JumpList  implements Set {
 		}
 	}
 
-	public JumpListNode build_perfect_jumplist(JumpListNode x, int n){
+	private JumpListNode build_perfect_jumplist(JumpListNode x, int n){
 		while (n > 1)
 		{
 			int m = (n - 1) / 2;
@@ -113,89 +129,7 @@ public class JumpList  implements Set {
 		return x.nextNode;
 	}
 
-	// redundant insert method
-	// rebuild all the jump links during each insertion.
-	public void redu_insert(Comparable data){
-		boolean found = false;
-		JumpListNode x = this.headNode;
-
-		if (x != null && x.value.compareTo(data) == 0){
-			//System.out.println("Target Item: " + data + " is in the header of jumplist already.");
-			return;
-		}
-		if (this.length == 1 && x.value.compareTo(data) == 0){
-			//System.out.println("Target Item: " + data + " is in the header of jumplist already.");
-			return;
-		}
-
-		while (x.jumpToNode != x)
-		{
-			if (x.jumpToNode != null && x.jumpToNode.value.compareTo(data) < 0){
-				x = x.jumpToNode;
-			}
-			else if (x.nextNode != null && x.nextNode.value.compareTo(data) < 0){
-				x = x.nextNode;
-			}
-			else {
-				if (x.nextNode != null && x.nextNode.value.compareTo(data) == 0)
-					found = true;
-				else if (x.nextNode == null && x.value.compareTo(data) == 0)
-					found = true;
-				break;
-			}
-		}
-
-		if (found)
-		{
-			//System.out.println("Target Item: " + data + " is in the jumplist already.");
-			return;	
-		}
-
-		//System.out.println("Beign to insert item: " + data);
-		JumpListNode newNode = new JumpListNode(data);
-
-		if (x.value.compareTo(data) < 0)
-		{
-			if (x.nextNode != null)
-			{
-				newNode.nextNode = x.nextNode;
-				x.nextNode = newNode;	
-			}
-			else
-			{
-				x.nextNode = newNode;
-			}	
-		}
-		else if (x.value.compareTo(data) > 0)
-		{
-			// new item inserted to the left of the item (header case)
-			newNode.nextNode = x;
-			if (x == this.headNode)
-				this.headNode = newNode;
-		}
-		else
-		{
-			//System.out.println("Target Item: " + data + " is in the jumplist already.");
-			return;	
-		}
-		
-
-		this.length++;
-		//x = this.headNode;
-		this.build_perfect_jumplist(this.headNode, this.length);
-	}
-
-	// insertion algorithm from the deterministic jumplist paper
-	// there is a defect in the paper's algorithm when the first 
-	// inserted item is less than the header of the list. In this
-	// case the item somehow is inserted into the second place.
-	public void dj_insert(Comparable data){
-		/*if (this.contains(data))
-		{
-			//System.out.println("Target Item: " + data + " is in the jumplist already.");
-			return;
-		}*/
-
+	private void dj_insert(Comparable data){
 		JumpListNode x = this.headNode;
 		JumpListNode y = new JumpListNode(data);
 
@@ -274,14 +208,12 @@ public class JumpList  implements Set {
 		}
 
 		return (x.nextNode != null ? x.nextNode.value.compareTo(data) == 0 : false);
-		//return false;
 	}
 
 	public void delete(Comparable data)
 	{
 		if (!this.contains(data))
 		{
-			//System.out.println("Deleted Item: " + data + " is not in the list.");
 			return;
 		}
 
@@ -355,32 +287,20 @@ public class JumpList  implements Set {
 			x = null;
 		}
 	}
-
-	public void successor(Comparable data)
-	{
-
-	}
-
-	public Comparable getMin(){
-		return null;
-	}
-
 	@Override
 	public void insert(Comparable data) {
 		if (this.headNode.value == null){
 			init_insert(data);
 		}
-		// TODO Auto-generated method stub
-		//this.redu_insert(data);
 		this.dj_insert(data);
 	}
 
-	public int getLength() 
+	private int getLength() 
 	{
 		return this.length;
 	}
 
-	public JumpListNode getHeader()
+	private JumpListNode getHeader()
 	{
 		return this.headNode;
 	}

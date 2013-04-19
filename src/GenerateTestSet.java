@@ -7,7 +7,7 @@ public class GenerateTestSet {
 	private static final Random random = new Random();
 	public static void main(String[] args) throws FileNotFoundException{
 		PrintWriter writer= new PrintWriter("bin/testdata.txt");
-		for (long i = 1; i <= 1*(int)Math.pow(10, 4); i++){
+		for (long i = 1; i <= (int)Math.pow(10, 6); i++){
 			writer.println(random.nextInt());
 		}
 		writer.close();

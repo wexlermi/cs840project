@@ -161,7 +161,7 @@ For the experiment we utilized previous implementations of the Treap \cite{treap
 
 We thought it would be interesting to collect metrics on runtime and datasize of these probabilistic data structures, to see which ones perform most competitively from a time and space performance perspective. Since the AVL tree is deterministic, we decided to also measure the performance of it, and to use that as a baseline.
 
-For our experiment, we generated a test data set of one million randomly chosen integers. For each of our data structures, we measured the timing it would take to insert all the test data into the data structure, as well as the space occupied in memory of the data structure. Also, we made a random permutation of the elements in our data set, which represents a sequence of requests. For this sequence of requests, we measured the time it took to query all the elements for each data structure. Our results are in Table \ref{table:timings}.
+For our experiment, we generated a test data set of one million randomly chosen integers. This data-set exists in our GitHub with the name "testdata.txt". For each of our data structures, we measured the timing it would take to insert all the test data into the data structure, as well as the space occupied in memory of the data structure. Also, we made a random permutation of the elements in our data set, which represents a sequence of requests. For this sequence of requests, we measured the time it took to query all the elements for each data structure. Our results are in Table \ref{table:timings}.
 
 \begin{table}[htbp]
 \caption{Timings for each data structure in seconds}
