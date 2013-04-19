@@ -20,7 +20,7 @@
 
 \begin{document}
 
-\title{ Skip Lists, Jump Lists, and Other Randomized Data Structures for Maintaining Ordered Sets}
+\title{ Skip Lists, Treaps, and Other Randomized Data Structures for Maintaining Ordered Sets}
 
 \author{Bairong Lei, Michael Wexler}
 
@@ -30,29 +30,22 @@
 
 \begin{abstract}
   In this project, we will discuss several probabalistic data structures for maintaining ordered sets. These
-  data structures use probabalistic methods to keep balanced, which helps to avoid skewed distributions that
-  can lead to excessive running times. 
+  data structures use probabalistic methods to remain approximately balanced, which helps to avoid skewed distributions that can lead to excessive running times. 
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction}
 
-The need for ordered sets is very common in computer science. By ordered set, we mean a typical set data structure which has the additional property of maintaining the order of its elements. Programmers often need
-such a structure in order to determine if a given element is in the set, and also to find the nearest predecessor for a given element. Given the functionality of an ordered set, it can be extended so that every 
-key maps to a certain value. This would essentially be a dictionary data structure. One would hope that the most common dictionary operations would take O(log n), or better yet, O(1) time.
+The need for ordered sets is very common in computer science. By ordered set, we mean a typical set data structure (which provides membership information) which has the additional property of maintaining the order of its elements. At a minimum, an ordered set should contain the functions {\it insert}, {\it contains}, {\it delete}, and {\it successor}. Programmers often need such a structure in order to determine if a given element is in the set, and also to find the nearest successor of a given element. Given the functionality of an ordered set, it can be extended so that every key maps to a certain value. This would essentially be a dictionary data structure. One would hope that the most common dictionary operations would take $O(\log{n})$, or better yet, $O(1)$ time.
 
-There has been much work in developing set data structures that provide O(log n) lookup time. Examples of these are hash-tables, AVL trees, and red-black trees. In addition to quick lookup times, AVL trees and red-black trees have the additional property of being able to provide O(log n) time for the next-predecessor operation, which, for a given key, will give the smallest key that is greater than that key.
+There has been much work in developing dictionary data structures that provide fast runtime. Examples of these are hash-tables and binary-search-trees. Hash-tables actually provide $O(1)$ lookup time, compared to binary-search-trees which have $O(\log{n})$ lookup time in the average-case. However, hash-tables are not ordered, so they do not provide the {\it successor} operation. On the other hand, binary-search-trees are ordered, so they are able to provide $O(\log{n})$ time for the successor operation.
+ 
+For binary-search-trees, there is often the occurence where a certain sequence of operations cause the data structure to be skewed. For instance, for a given $n$, if we were to insert the sequence $1, 2, \dots, n$ into a normal binary search tree, we would end up having a very skewed structure, which would could take $O(n)$ time to find an element. For this reason self-adjusting binary-search-trees, such as AVL trees \cite{avl_tree} and red-black trees \cite{red_black_trees}, have been developed. They use deterministic methods to perform self-balancing, so the skewed distribution cannot occur.
 
-For the afforementioned dictionary data structures, there is often the occurence where 
+The afforementioned data structures, in their classical implementations, all use deterministic methods for organizing their data.  Oftentimes, one can use randomization in order to avoid situations where their data structure becomes skewed. In this paper we will discuss various data structures that use randomization in order to maintain approximate balance.
 
-For instance, for a given n, if we were to insert the sequence 1 2 ... n into a normal binary search tree, we would end up having a very skewed structure, which would could take O(n) time to find an element. This is the reason AVL and red-black trees were developed. They use deterministic methods to perform self-balancing, so the skewed distribution never occurs.
-
-The afforementioned data structures in their classical implementations all use deterministic methods for organizing their data.  Oftentimes, one wants to put a certain element of randomness into their dictionary data structures in order to avoid situations where their data structure becomes skewed. In this paper we will discuss various data structures that use randomness in order to maintain a level of balance, to avoid skewed distributions.
-
-This paper is organized as follows: section \ref{sctn:randomized_data_structures} will give an overview on several probabalistic set data structures. Section \ref{sctn:experiments} will give an overview on some experiments we performed in order to compare these data structures.
-
-The last section draws a conclusion of our work.
+This paper is organized as follows: section \ref{sctn:randomized_data_structures} will give an overview on several probabalistic set data structures. Section \ref{sctn:implementation} will discuss several of the implementations that we have written. Section \ref{sctn:experiment} will give an overview on some experiments we performed in order to compare these data structures. The last section draws a conclusion of our work.
 
 All test files and program code we describe in this report can be found in our \textsc{GitHub} repository \url{https://github.com/wexlermi/cs840project}.
 
@@ -98,13 +91,13 @@ Skip-lists use probabalistic methods in order to determine how many levels of a 
 
 \subsection{Skip lifts}
 
-In \cite{skip_lift} Bose, Douïeb, Morin talk about an improvement to the skip list called the skip lift. A skip lift is a skip list in which every element only has the top two nodes. The rest are deleted. This greatly reduces the size of the skip list.
+In \cite{skip_lift} Bose, Douïeb, Morin talk about an improvement to the skip list called the skip lift. A skip lift is a skip list in which every element only has the top two nodes. The rest are deleted. In Figure \ref{fig:skip_lift} 
 
 \begin{figure}[here]
 \center
 \includegraphics[width=12cm]{images/skiplist_vs_skiplift}
 \caption{Skip-list (a)  vs. skip-lift (b)}
-\label{fig:skip_list}
+\label{fig:skiplist_vs_skiplift}
 \end{figure}
 
 
@@ -140,19 +133,14 @@ A jumplist usually has a set of common methods that a dictionary data structure 
 
 Implementation:
 
-There are some challenges to implement the insertion and deletion methods for the jumplist, since the pseudo code for these two methods are missing in the original randomized jumplist paper. Although there has been a C plus plus implementation for the jumplist data structure in H. Brönnimann’s research work (\url{http://photon.poly.edu/~hbr/publi/jumplist.html}) from the Polytechnic University, unfortunately its source code is too old and severely handicapped for its missing search and insertion methods so that we have to pursure another solution. Another challenge is when we strive to use the insertion algorithm from the deterministic jumplist paper, we find there is a defect in that algorithm so that whenever there is an inserted item whose value is less than the value of the header node, the insertion method always places it to the second place of the list.
-
-We decide to implement our data structures in Java. For the time being, we only implement the search and insertion methods for the jumplist. The jumplist is initialized as an ordinary linked list at the beginning. A method called buildperfectjumplist is invoked to create the jump pointers for each node using the algorithm introduced in the deterministic jumplist paper. Meanwhile, each node updates its corresponding sizes of its next and jump sublists. The search method is implemented basing on its algorithm in the randomized jumplist paper to use the jump links as many as possible to skip nodes to speed up the search. For the insertion method we have implemented two versions to compare their running time. The first insert method is called djinsert which uses exactly the same algorithm introduced in the deterministic jumplist paper and inherits the first item insertion defect stated previously. After a new item is inserted, its jump pointer is updated as follows: The whole list is iterated to check whether there exists a node violating the balancing condition to rebuild the jump pointers for the entire list. If the jump pointer of the predecessor of the new item points to itself, its jump pointer is changed to point to the new item and the new item also inherits the jump pointer of its immediate successor. Meanwhile, the new item’s sizes of its next and jump sublists is updated respectively. On the other hand, the other insertion method follows the basic search algorithm to find the insertion point and inserts the new item as well as calling the buildperfectjumplist method to rebuild all the jump pointer for the entire list. This method resolves the first item insertion defect and does not need to maintain its sizes of next and jump sublists, but we expect the its running time is longer due to the redundancy of its jump pointer rebuilding procedure.
-
-Running result:
-
+There are some challenges to implement the insertion and deletion methods for the jumplist, since the pseudo code for these two methods are missing in the original randomized jumplist paper. Although there has been a C plus plus implementation for the jumplist data structure in H. Brönnimann’s research work \cite{Broennimann}, unfortunately its source code is too old and severely handicapped for its missing search and insertion methods so that we have to pursure another solution. Another challenge is that when we tried to use the insertion algorithm from the deterministic jumplist paper, we found that there is a defect in that algorithm so that whenever there is an inserted item whose value is less than the value of the header node, the insertion method always places it to the second place of the list. This inhibits the current algorithm from being efficiently implemented, as we will see in our experiments section.
 
 \subsection{Skynet}
 
 Skynet is a scalable overlay network designed to eliminate the disadvantages of peer-to-peer systems that have no control of data storage location and do not satisfy the need to restrain the routing path within a certain range. Due to time constraints, we were unable to implement SkyNet, but instead we will give a brief overview of the purpose and design of SkyNet.
 
 \begin{figure}[here]
-\center
+\center\underline{}
 \includegraphics[width=12cm]{images/skynet}
 \caption{A Skynet with 8 elements}
 \label{fig:skynet}
@@ -177,12 +165,16 @@ Routing can follow a clockwise direction or a counter-clockwise direction. There
 
 For this project, we decided to implement the skip lift \cite{skip_lift}. We built our implementation off an implementation of the skip list \cite{skip_list_imp}. We also implemented the jump list\cite{jump_list}.  Our implementations can be found on our GitHub here: \url{http://github.com/wexlermi/cs840project}.
 
+Due to the limited time for this project, we were unable to implement the operations of {\it delete} and {\it successor}. We were unfortunately only able to implement {\it insert} and {\it contains}, which are the minimum operations a set data structure must contain.
+
+For the experiment we utilized previous implementations of the Treap \cite{treap_imp} and the AVL Tree \cite{avl_tree_imp}.
+
  \section{Experiment and Analysis}
 \label{sctn:experiment}
 
-We thought it would be interesting to collect metrics on runtime and datasize of these data structures, to see which ones perform most competitively from a time and space performance perspective.
+We thought it would be interesting to collect metrics on runtime and datasize of these probabilistic data structures, to see which ones perform most competitively from a time and space performance perspective. Since the AVL tree is deterministic, we decided to also measure the performance of it, and to use that as a baseline.
 
-For our experiment, we generated a test data set of one million randomly chosen integers. For each of our data structures, we measured the timing it would take to insert all the test data into the data structure, as well as the space occupied in memory of the data structure. Also, we made a random permutation of the elements in our data set, which represents a sequence of requests. For this sequence of requests, we measured the time it took to query all the elements for each data structure.
+For our experiment, we generated a test data set of 200,000 randomly chosen integers. For each of our data structures, we measured the timing it would take to insert all the test data into the data structure, as well as the space occupied in memory of the data structure. Also, we made a random permutation of the elements in our data set, which represents a sequence of requests. For this sequence of requests, we measured the time it took to query all the elements for each data structure. Our results are in Table \ref{table:timings}.
 
 
 \begin{table}[htbp]
@@ -190,15 +182,15 @@ For our experiment, we generated a test data set of one million randomly chosen 
 \begin{center}
 \begin{tabular}{|r|r|r|r|r|r|}
 \hline
-Data Structure & Time to insert & Time to query \\ \hline
-AVLTree & 0.75 & 0.75 \\ \hline
-Treap & 0.75 & 0.75\\ \hline
-SkipList & 0.667 & 0.667  \\ \hline
-SkipLift & 0.625 & 0.75  \\ \hline
-JumpList & 0.6 & 0.7 \\ \hline
+Data Structure & Time to insert (ms) & Time to query (ms) \\ \hline
+AVLTree & 190.762 & 150.042 \\ \hline
+Treap &  199.373 & 208.282 \\ \hline
+SkipList & 526.771 & 290.851 \\ \hline
+SkipLift & 488.262 & 629.575  \\ \hline
+JumpList & 1474419.275 & 349.527 \\ \hline
 \end{tabular}
 \end{center}
-\label{abc}
+\label{table:timings}
 \end{table}
 
 \begin{table}[htbp]
@@ -206,44 +198,28 @@ JumpList & 0.6 & 0.7 \\ \hline
 \begin{center}
 \begin{tabular}{|r|r|r|r|r|r|}
 \hline
-Data Structure & Space (megabytes) \\ \hline
-AVLTree & 0.75 \\ \hline
-Treap & 0.75\\ \hline
-SkipList & 0.667   \\ \hline
-SkipLift & 0.625  \\ \hline
-JumpList & 0.6 \\ \hline
+Data Structure & Space (mb) \\ \hline
+AVLTree & 7.229 \\ \hline
+Treap & 7.0362 \\ \hline
+SkipList & 14.100   \\ \hline
+SkipLift & 14.376  \\ \hline
+JumpList & 8.720 \\ \hline
 \end{tabular}
 \end{center}
 \label{abc}
 \end{table}
 
-We conjectured that the skip lift would take less space than the skip list.
+Upon analyzing our timing results, we note that the AVL Tree, which is deterministic, had the best time performance for both types. Amongst the probabalistic data structures, we find the treap gave hte best performance. We find it interesting that the SkipLift had better performance for insert time, but the classical SkipList had better performance for query time.
 
+Unfortunately, the jump-list took approximately 25 minutes to finish completing the insert operation. Although we implemented it directly as specified in the pseudocode in the paper, we believe there is a bug in the pseudocode which causes the insert operation to take a very long time.
 
-\begin{remark}
-Hello
-\end{remark}
-
-\begin{itemize}
-  \item The executable file that was compiled by \texttt{crestc}
-  \item A number of maximal iterations through the control flow graph
-    we want to allow (i.e. a limitation to the paths we
-    want to consider. Otherwise the program might run too long)
-  \item A strategy \textsc{CREST} should use to traverse the control
-    flow graph. Possible options here are in the set
-\begin{center}
-$\{$\texttt{dfs}, \texttt{cfg}, \texttt{random},
-    \texttt{uniform\_random}, \texttt{random\_input}, 
-    \texttt{cfg\_baseline}, \texttt{hybrid}$\}$
-\end{center}
-\end{itemize}
-
-
+Upon analyzing our space results, we note that the Treap and the AVLTree take up the least space, with the JumpList coming in at a close third. However, the SkipList and SkipLift take up the most space. The explanation we can provide for this result is that the Treap, AVLTree, and JumpList do not use extra pointers, while the SkipList and SkipLift do. The SkipList and SkipLift both contain extra pointers that enable fast search through the structure. This makes the Treap, AVLTree, and JumpList use a lot less space than the SkipList and SkipLift. Comparing SkipList to SkipLift, we were quite to surprised to see that the SkipLift takes up more space than the SkipList. This is surprising because the SkipLift only keeps the nodes on the top two levels for a given element, and gets rid of the rest. However, the SkipLift keeps track of the previous pointers for every node, which has a greater effect on the total space than the deletion of extra nodes.
 
 \section{Conclusion and Future Work}
 \label{sctn:Conclusion}
 
-There are several conclusions we can draw in this report.
+From the start of this project, we were interested in seeing if using randomization has any effect on the performance of a dictionary data structure. Using the deterministic AVLTree as our baseline, we come to the conclusion that for our situation, there is not too much benefit to using randomization. Of course, randomization can have benefits for algorithms such as QuickSort, in which the pivot is randomly chosen each time. Or, in a hash-table, to keep elements from clustering. But for some of the randomized data structures we presented, we did not see any benefits. In particular, we were disappointed to see the results of the SkipList and the SkipLift, which used double the memory of the AVLTree, and did not give any benefit to time performance.
+
 
 
 \bibliographystyle{plain}
