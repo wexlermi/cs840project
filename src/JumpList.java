@@ -1,5 +1,13 @@
 import java.util.Random;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.List;
+import java.util.Collections;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectOutput;
+
 
 public class JumpList  implements Set {
 	static Random random = new Random();
@@ -10,7 +18,7 @@ public class JumpList  implements Set {
 	public JumpList()
 	{
 		this.length = 0;
-		this.headNode = null;
+		this.headNode = new JumpListNode();
 		//this.tailNode = null;
 	}
 
@@ -21,66 +29,57 @@ public class JumpList  implements Set {
 		//this.tailNode = null;
 	}
 
-	public static void main(String args[])
+	public static void main(String args[]) throws IOException 
 	{
-		////Inititalize a jump list here
-		JumpList jl = new JumpList(500);
-		jl.init_insert(55);
-		jl.insert(-575777525);
-		//jl.init_insert(55);
-		/*jl.init_insert(44);
-		jl.init_insert(33);
-		jl.init_insert(22);
-		jl.init_insert(11);*/
-		/*for (int i = 20; i >= 1; i--)
-			jl.init_insert(i);
-		*/
-		//randomly generate numbers for jumplist
-		long[] oList = new long[10000];
-		for (int i = oList.length-1; i >= 0; i--)
-		{
-			long randomNum = random.nextInt();
-			while (Arrays.binarySearch(oList, randomNum) >= 0){
-				//System.out.println("Number is in the list. Regenerating......");
-				randomNum = (int) (Math.random() * 100);
+		/* Testing from testdata.txt */
+		Scanner in = new Scanner(new FileReader("testdata.txt"));
+		List<Long> numberList = new ArrayList<Long>();
+		while (in.hasNextLong()) {
+			long num = in.nextLong();
+			//System.out.println(num);
+			numberList.add(num);
+		}
+		JumpList jl = new JumpList();
+		try {
+			for (int i = 0; i < numberList.size(); i++)
+			{
+				System.out.println("Inserting item " + (i + 1) + ":   " + numberList.get(i));
+				jl.insert(numberList.get(i));
 			}
-			oList[i] = randomNum;
 		}
-		Arrays.sort(oList);
-		for (int i = oList.length-1; i >= 0; i--)
-			jl.init_insert(oList[i]);
-		
-		
-		//build up the jump links here
-		jl.build_perfect_jumplist(jl.headNode, jl.length);
-		//jl.print_list();
-
-		// test search method here
-		/*int tItems[] = new int[]{2, 7, 13, 21}; 
-		for (int i = 0; i < tItems.length; i++){
-			int target_item = tItems[i];
-			System.out.println("The jl contains " + target_item + ": " + jl.contains(target_item));
-		}*/
-
-		// test insert method here
-		int tItems[] = new int[]{7, 50, 100}; 
-		for (int i = 0; i < tItems.length; i++){
-			long target_item = tItems[i];
-			System.out.println("Inserting: " + target_item + "\n");
-			jl.insert(target_item);
-			//jl.redu_insert(target_item);
-			//jl.dj_insert(target_item);
+		catch (Exception e)
+		{
+			System.err.println("Exception: " + e.getMessage());
 		}
-		//jl.print_list();
-		
-
+		try {
+			//Collections.shuffle(numberList);
+			jl.print_list();
+			System.out.println("numberList size is " + numberList.size() + " 	numberList[-1] = " + numberList.get(numberList.size()-1));
+			System.out.println("jumplist size is " + jl.getLength() + " 	jumplist[0] = " + jl.getHeader().value);
+			System.out.println("jumplist[1] = " + jl.getHeader().nextNode.value);
+			int numOfFound = 0;
+			for (int i = 0; i < numberList.size(); i++)
+			{
+				if (jl.contains(numberList.get(i)))
+				{
+					System.out.println("Found Item: " + numberList.get(i));
+					numOfFound++;
+				}
+				else
+					System.out.println("Not Found item " + (i + 1) + ":   " + numberList.get(i));//jl.contains(numberList.get(i)));
+			}
+			System.out.println("Total number of found items: " + numOfFound);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Exception: " + e.getMessage());
+		}
+		System.out.println("Orignal list size: " + numberList.size());	
 	}
 
 	private void init_insert(Comparable data)
 	{
-		JumpListNode newNode = new JumpListNode(data);
-		newNode.nextNode = this.headNode;
-		headNode = newNode;
+		this.headNode.value = data;
 		this.length++;
 	}
 
@@ -146,11 +145,6 @@ public class JumpList  implements Set {
 			}
 		}
 
-		/*if (!found)
-		{
-			if (x.nextNode != null && x.nextNode.value.compareTo(data) == 0)
-				found = true;
-		}*/
 		if (found)
 		{
 			//System.out.println("Target Item: " + data + " is in the jumplist already.");
@@ -196,24 +190,24 @@ public class JumpList  implements Set {
 	// inserted item is less than the header of the list. In this
 	// case the item somehow is inserted into the second place.
 	public void dj_insert(Comparable data){
-		if (this.contains(data))
+		/*if (this.contains(data))
 		{
 			//System.out.println("Target Item: " + data + " is in the jumplist already.");
 			return;
-		}
+		}*/
 
 		JumpListNode x = this.headNode;
 		JumpListNode y = new JumpListNode(data);
 
 		while (x.jumpToNode != x)
-		{
+		{			
 			double alpha = 0.4;	//0 < alpha < 0.5; alpha could be 1 - 1/sqrt(2)
 			double temp = (double)(x.ncount + 1)/(2 + x.ncount + x.jcount);
 			if ((1 - alpha) < temp && temp < alpha){
-				//System.out.println("Calling build_perfect_jumplist()...........");
+				System.out.println("Calling build_perfect_jumplist()...........");
 				this.build_perfect_jumplist(x, (1 + x.ncount + x.jcount));
 			}
-			if (x.jumpToNode.value.compareTo(data) <= 0)
+			if (x.jumpToNode != null && x.jumpToNode.value.compareTo(data) <= 0)
 			{
 				x.jcount++;
 				x = x.jumpToNode;
@@ -221,7 +215,7 @@ public class JumpList  implements Set {
 			else
 			{
 				x.ncount++;
-				if (x.nextNode.value.compareTo(data) <= 0)
+				if (x.nextNode != null && x.nextNode.value.compareTo(data) <= 0)
 					x = x.nextNode;
 				else
 					break;
@@ -373,12 +367,21 @@ public class JumpList  implements Set {
 
 	@Override
 	public void insert(Comparable data) {
-		if (headNode == null){
+		if (this.headNode.value == null){
 			init_insert(data);
 		}
 		// TODO Auto-generated method stub
-		redu_insert(data);
-		//this.dj_insert(data);
-		//this.dj_insert((int)data);
+		//this.redu_insert(data);
+		this.dj_insert(data);
+	}
+
+	public int getLength() 
+	{
+		return this.length;
+	}
+
+	public JumpListNode getHeader()
+	{
+		return this.headNode;
 	}
 }
