@@ -161,7 +161,7 @@ For the experiment we utilized previous implementations of the Treap \cite{treap
 
 We thought it would be interesting to collect metrics on runtime and datasize of these probabilistic data structures, to see which ones perform most competitively from a time and space performance perspective. Since the AVL tree is deterministic, we decided to also measure the performance of it, and to use that as a baseline.
 
-For our experiment, we generated a test data set of one million randomly chosen integers. This data-set exists in our GitHub with the name "testdata.txt". For each of our data structures, we measured the timing it would take to insert all the test data into the data structure, as well as the space occupied in memory of the data structure. Also, we made a random permutation of the elements in our data set, which represents a sequence of requests. For this sequence of requests, we measured the time it took to query all the elements for each data structure. Our results are in Table \ref{table:timings}.
+For our experiment, we generated a test data set of one million randomly chosen integers. This data-set exists in our GitHub with the name "testdata.txt". For each of our data structures, we measured the timing it would take to insert all the test data into the data structure, as well as the space occupied in memory of the data structure. Also, we made a random permutation of the elements in our data set, which represents a sequence of requests. For this sequence of requests, we measured the time it took to query all the elements for each data structure. Our timing results are in Table \ref{table:timings}.
 
 \begin{table}[htbp]
 \caption{Timings for each data structure in seconds}
@@ -192,12 +192,12 @@ SkipLift & 68.439 \\ \hline
 JumpList & 15.762 \\ \hline
 \end{tabular}
 \end{center}
-\label{abc}
+\label{table:space}
 \end{table}
 
 Upon analyzing our timing results, we note that the AVL Tree, which is deterministic, had the best time performance for both types. Amongst the probabalistic data structures, we find the Treap and SkipList gave the best performance. The SkipLift and JumpList took approximately twice as long as the other probabalistic data structures, for both insert-time and query-time.
 
-Upon analyzing our space results, we find that the JumpList took up the least space, by far. This is a testament to the space-efficiency of the JumpList data structure, which uses a similar skip mentality to the SkipList, but uses far less extra pointers, since only a fraction of the nodes in the JumpList contain jump pointers. The SkipList and SkipLift take up the most space, since their structure is conducive to using extra nodes and pointers. Comparing SkipList to SkipLift, we were quite to surprised to see that the SkipLift takes up more space than the SkipList. This is surprising because the SkipLift only keeps the nodes on the top two levels for a given element, and gets rid of the rest. However, the SkipLift keeps track of the previous pointers for every node, which appears to have a greater effect on the total space than the deletion of extra nodes. This appears to demonstrate that the SkipLift does not offer any benefits as compared to the SkipList.
+Upon analyzing our space results in Table \ref{table:space}, we find that the JumpList took up the least space, by far. This is a testament to the space-efficiency of the JumpList data structure, which uses a similar skip mentality to the SkipList, but uses far less extra pointers, since only a fraction of the nodes in the JumpList contain jump pointers. The SkipList and SkipLift take up the most space, since their structure is conducive to using extra nodes and pointers. Comparing SkipList to SkipLift, we were quite to surprised to see that the SkipLift takes up more space than the SkipList. This is surprising because the SkipLift only keeps the nodes on the top two levels for a given element, and gets rid of the rest. However, the SkipLift keeps track of the previous pointers for every node, which appears to have a greater effect on the total space than the deletion of extra nodes. This appears to demonstrate that the SkipLift does not offer any benefits as compared to the SkipList.
 
 \section{Conclusion}
 \label{sctn:Conclusion}

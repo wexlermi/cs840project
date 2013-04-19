@@ -24,7 +24,7 @@
 
 @MISC{,
   author = {H. Brönnimann},
-  title = {Implementation for the jumplist data structure},
+  title = {Implementation of the jumplist data structure},
   note = {http://photon.poly.edu/~hbr/publi/jumplist.html},
   owner = {mike},
   timestamp = {2013.04.18}
